@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: postgres:17 
+    environment:
+      POSTGRES_DB: "gastro-tour"
+      POSTGRES_USER: "gastro-tour"
+      POSTGRES_PASSWORD: "gastro-tour"
+    ports:
+      - 5432:5432
+      
+    
