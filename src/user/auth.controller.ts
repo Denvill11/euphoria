@@ -5,6 +5,7 @@ import { RegisterUserDTO } from './dto/registerUserDTO';
 import { LoginUserDTO } from './dto/loginUserDTO';
 import { whoamiType } from './dto/whoamiDTO';
 import { AuthGuard } from '../guards/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -22,6 +23,7 @@ export class AuthController {
     return await this.authService.loginUser(userData);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('/whoami')
   getUserInfo(@Request() req: whoamiType) {
