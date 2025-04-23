@@ -1,10 +1,13 @@
 import {
   BeforeCreate,
   Column,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
+
+import { Tour } from './tour';
 
 @Table
 export class User extends Model<User> {
@@ -36,4 +39,7 @@ export class User extends Model<User> {
       Number(process.env.SALT_ROUNDS),
     );
   }
+
+  @HasMany(() => Tour)
+  tours: Tour[];
 }
