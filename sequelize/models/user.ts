@@ -9,7 +9,13 @@ import * as bcrypt from 'bcrypt';
 
 import { Tour } from './tour';
 
-@Table
+export enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin',
+  ORGANIZER = 'organizer',
+}
+
+@Table({ tableName: 'users' })
 export class User extends Model<User> {
   @Column({ allowNull: false, unique: true})
   email: string;
@@ -29,8 +35,8 @@ export class User extends Model<User> {
   @Column({ allowNull: true })
   avatarPath: string;
 
-  @Column({ allowNull: false, defaultValue: false })
-  isAdmin: boolean;
+  @Column({ allowNull: false, defaultValue: 'user', type: 'user_role' }) 
+  role: UserRole;  
 
   @BeforeCreate
   static async hashPassword(user: User) {

@@ -35,12 +35,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      isAdmin: {
-        allowNull: false,
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
-      },
-      
     });
   },
   down: async (queryInterface) => {
