@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-import { Errors } from '../../../constants/errorMessages'
+import { Errors } from '../../constants/errorMessages'
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterUserDTO {
@@ -10,38 +10,34 @@ export class RegisterUserDTO {
   @IsEmail()
   @IsString()
   @Transform(({ value }) => value.trim())
-  readonly email: string;
+  email: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }) => value.trim())
-  readonly name: string;
+  name: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   @Transform(({ value }) => value.trim())
-  readonly surname: string;
+  surname: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   @MinLength(8, { message: Errors.smallPassword })
   @Transform(({ value }) => value.trim())
-  readonly password: string;
+  password: string;
 
   @ApiProperty()
   @IsString()
   @Transform(({ value }) => value.trim())
-  readonly patronymic?: string;
+  patronymic?: string;
 
   @ApiProperty()
   @IsString()
   @Transform(({ value }) => value.trim())
-  readonly avatarPath?: string;
-
-  @ApiProperty()
-  @IsBoolean()
-  isAdmin?: boolean;
+  avatarPath?: string;
 }

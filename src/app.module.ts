@@ -6,6 +6,8 @@ import { User } from 'sequelize/models/user';
 import { CustomJwtModule } from './custom-jwt/custom-jwt.module';
 import { Tour } from 'sequelize/models/tour';
 import { UserModule } from './user/user.module';
+import { TourCategory } from 'sequelize/models/tour-category';
+import { Category } from 'sequelize/models/category';
 
 @Module({
   imports: [
@@ -19,7 +21,7 @@ import { UserModule } from './user/user.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      models: [User, Tour],
+      models: [User, Tour, TourCategory, Category],
     }),
     CustomJwtModule,
     AuthModule,

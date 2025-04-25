@@ -7,10 +7,10 @@ import {
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { User } from 'sequelize/models/user';
+import { User, UserRole } from 'sequelize/models/user';
 import { LoginUserDTO } from './dto/loginUserDTO';
 import { RegisterUserDTO } from './dto/registerUserDTO';
-import { Errors } from '../../constants/errorMessages';
+import { Errors } from '../constants/errorMessages';
 
 @Injectable()
 export class AuthService {
@@ -32,14 +32,15 @@ export class AuthService {
     });
   }
 
-  private generateToken(id: number) {
-    return this.jwtService.signAsync({ id });
+  private generateToken(id: number, userRole: UserRole) {
+    console.log(userRole);
+    return this.jwtService.signAsync({ id, userRole });
   }
 
   async loginUser(userDto: LoginUserDTO) {
     const user = await this.validateUser(userDto);
     user.dataValues.password = '';
-    const token = await this.generateToken(user.id);
+    const token = await this.generateToken(user.id, user.dataValues.role);
     return { token, user };
   }
 
@@ -56,7 +57,7 @@ export class AuthService {
     }
 
     const user = await this.userData.create(userDto as User);
-    const token = await this.generateToken(user.id);
+    const token = await this.generateToken(user.id, user.dataValues.role);
     user.dataValues.password = '';
     return { user, token };
   }
@@ -70,7 +71,7 @@ export class AuthService {
     }
     const isPasswordEquals = await bcrypt.compare(
       userDto.password,
-      user.password,
+      user.dataValues.password,
     );
     if (!isPasswordEquals) {
       throw new UnauthorizedException({

@@ -1,25 +1,41 @@
 import {
   Body,
   Controller,
-  Param,
-  ParseIntPipe,
-  Post,
-  UploadedFiles,
-  UseInterceptors,
+  Patch,
+  UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { Express as ExpressType } from 'express';
+import { ImageUpload } from 'src/decorators/image-upload.decorator';
+import { User } from 'src/decorators/user-decorator';
+import { AuthGuard } from 'src/guards/jwt-auth.guard';
+import { UserService } from './user.service';
+import { UpdatePersonalInfoDTO } from './dto/updateUserDto';
+import { UpdatePasswordDTO } from './dto/updatePasswordDto';
 
 @ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller('user')
 export class UserController {
-  constructor() {}
+  constructor(
+    private readonly userService: UserService,
+  ) {}
 
-  @UseInterceptors(FilesInterceptor('files'))
+  @Patch('/personal-info')
+  @ImageUpload({singleFile: true, fieldName: 'avatar'})
   addPhoto(
-    @Param('userId', ParseIntPipe) id: number,
-    @UploadedFiles() file: any,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() userData: UpdatePersonalInfoDTO,
+    @User() userId: number,
   ) {
+    return this.userService.addPhoto(file, userId, userData);
+  }
+
+  @Patch('/password') 
+  updatePassword(
+    @Body() passwordData: UpdatePasswordDTO,
+    @User() userId: number
+  ) {
+    return this.userService.updatePassword(passwordData, userId);
   }
 }

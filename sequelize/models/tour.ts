@@ -1,5 +1,6 @@
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -7,8 +8,10 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { User } from './user';
+import { Category } from './category';
+import { TourCategory } from './tour-category';
 
-@Table
+@Table({ tableName: 'tours' })
 export class Tour extends Model<Tour> {
   @Column({ allowNull: false})
   title: string;
@@ -34,4 +37,7 @@ export class Tour extends Model<Tour> {
 
   @BelongsTo(() => User)
   author: User;
+
+  @BelongsToMany(() => Category, () => TourCategory)
+  categories: Category[];
 }
