@@ -8,6 +8,7 @@ import { Tour } from 'sequelize/models/tour';
 import { UserModule } from './user/user.module';
 import { TourCategory } from 'sequelize/models/tour-category';
 import { Category } from 'sequelize/models/category';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { Category } from 'sequelize/models/category';
     CustomJwtModule,
     AuthModule,
     UserModule,
+    AdminModule,
   ],
 })
 export class AppModule {}

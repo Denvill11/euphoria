@@ -33,7 +33,6 @@ export class AuthService {
   }
 
   private generateToken(id: number, userRole: UserRole) {
-    console.log(userRole);
     return this.jwtService.signAsync({ id, userRole });
   }
 
