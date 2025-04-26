@@ -6,4 +6,8 @@ export const Errors = {
   changeSelfRole: "You cannot change your user's role",
   changeAdminRole: "You cannot change the role",
   isNotRoleValue: "Role must be one of the following: user, admin, or organizer",
+  innOrOgrn: "Incorrect Inn or Ogrn",
+  remoteApi: "Error on the remote API side",
+  applicationExists: "Application exists",
+  
 }

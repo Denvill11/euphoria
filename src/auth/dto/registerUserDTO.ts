@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 import { Errors } from '../../constants/errorMessages'
 import { ApiProperty } from '@nestjs/swagger';
@@ -37,6 +37,7 @@ export class RegisterUserDTO {
   patronymic?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   @Transform(({ value }) => value.trim())
   avatarPath?: string;
