@@ -4,12 +4,14 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { User } from './user';
 import { Category } from './category';
 import { TourCategory } from './tour-category';
+import { Flow } from './flows';
 
 @Table({ tableName: 'tours' })
 export class Tour extends Model<Tour> {
@@ -40,4 +42,7 @@ export class Tour extends Model<Tour> {
 
   @BelongsToMany(() => Category, () => TourCategory)
   categories: Category[];
+
+  @HasMany(() => Flow)
+  flows: Flow[];
 }
