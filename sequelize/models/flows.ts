@@ -4,9 +4,11 @@ import {
   Model, 
   ForeignKey, 
   BelongsTo, 
-  DataType 
+  DataType, 
+  HasMany
 } from 'sequelize-typescript';
 import { Tour } from './tour';
+import { Booking } from './booking';
 
 @Table({ tableName: 'flows' })
 export class Flow extends Model<Flow> {
@@ -41,7 +43,10 @@ export class Flow extends Model<Flow> {
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: true,
-    validate: { min: 0 },
+    validate: { min: 0 }, 
   })
   currentPrice: number;
+
+  @HasMany(() => Booking)
+  bookings: Booking[];
 }
