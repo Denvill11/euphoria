@@ -9,6 +9,8 @@ import { UserModule } from './user/user.module';
 import { TourCategory } from 'sequelize/models/tour-category';
 import { Category } from 'sequelize/models/category';
 import { AdminModule } from './admin/admin.module';
+import { OrganizationApplication } from 'sequelize/models/organizationApplications';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
   imports: [
@@ -22,12 +24,13 @@ import { AdminModule } from './admin/admin.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      models: [User, Tour, TourCategory, Category],
+      models: [User, Tour, TourCategory, Category, OrganizationApplication],
     }),
     CustomJwtModule,
     AuthModule,
     UserModule,
     AdminModule,
+    ApplicationModule,
   ],
 })
 export class AppModule {}

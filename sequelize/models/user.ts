@@ -2,12 +2,14 @@ import {
   BeforeCreate,
   Column,
   HasMany,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcrypt';
 
 import { Tour } from './tour';
+import { OrganizationApplication } from './organizationApplications';
 
 export enum UserRole {
   USER = 'user',
@@ -48,4 +50,7 @@ export class User extends Model<User> {
 
   @HasMany(() => Tour)
   tours: Tour[];
+
+  @HasOne(() => OrganizationApplication)
+  organizationApplication: OrganizationApplication;
 }
