@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 
 import { Tour } from './tour';
 import { OrganizationApplication } from './organizationApplications';
+import { Booking } from './booking';
 
 export enum UserRole {
   USER = 'user',
@@ -53,4 +54,7 @@ export class User extends Model<User> {
 
   @HasOne(() => OrganizationApplication)
   organizationApplication: OrganizationApplication;
+
+  @HasMany(() => Booking)
+  bookings: Booking[];
 }
