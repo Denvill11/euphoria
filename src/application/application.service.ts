@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import axios from "axios";
-import { OrganizationApplication, OrganizationStatus } from "sequelize/models/organizationApplications";
+import { ApplicationStatus, OrganizationApplication, OrganizationStatus } from "sequelize/models/organizationApplications";
+import { User, UserRole } from "sequelize/models/user";
 import { Errors } from "src/constants/errorMessages";
+import { userTokenData } from "src/decorators/user-decorator";
 
 export interface DadataOrganizationInfo {
   value: string;
@@ -16,11 +18,13 @@ export interface DadataOrganizationInfo {
 @Injectable()
 export class ApplicationService {
   constructor(
-    @InjectModel(OrganizationApplication) private readonly applicationData: typeof OrganizationApplication) {}
+    @InjectModel(OrganizationApplication) private readonly applicationData: typeof OrganizationApplication,
+    @InjectModel(User) private readonly userRepo: typeof User,
+  ) {}
 
   //TODO think about rmq
   async createApplication(userId: number, innOrOgrn: string) {
-    if(innOrOgrn.length <= 11) {
+    if(innOrOgrn.length < 10) {
       throw new HttpException(Errors.innOrOgrn, HttpStatus.BAD_REQUEST)
     }
 
@@ -86,5 +90,46 @@ export class ApplicationService {
     }
 
     return status as OrganizationStatus;
+  }
+
+  async getAll(
+    user: userTokenData,
+    filters?: { organizationStatus?: OrganizationStatus; adminApprove?: ApplicationStatus },
+  ) {
+    const where: any = {};
+  
+    if (filters?.organizationStatus) {
+      where.organizationStatus = filters.organizationStatus;
+    }
+  
+    if (filters?.adminApprove) {
+      where.adminApprove = filters.adminApprove;
+    }
+  
+    if (user.role !== UserRole.ADMIN) {
+      where.userId = user.id;
+    }
+  
+    return await this.applicationData.findAll({ where });
+  }
+
+  async updateApplicationStatus(applicationId: number, status: ApplicationStatus) {
+    const application = await this.applicationData.findByPk(applicationId);
+
+  if (!application) {
+    throw new HttpException('Application not found', HttpStatus.NOT_FOUND);
+  }
+
+  const userId = application.dataValues.userId
+  const user = await this.userRepo.findByPk(userId);
+
+  if(user?.role === UserRole.USER) {
+    await this.userRepo.update({role: UserRole.ORGANIZER}, { where: { id: userId } })
+  }
+
+  application.adminApprove = status;
+  await application.save();
+
+  return application;
   }
 }

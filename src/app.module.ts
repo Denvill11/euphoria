@@ -8,9 +8,14 @@ import { Tour } from 'sequelize/models/tour';
 import { UserModule } from './user/user.module';
 import { TourCategory } from 'sequelize/models/tour-category';
 import { Category } from 'sequelize/models/category';
-import { AdminModule } from './admin/admin.module';
+import { AdminModule } from './admin-panel/admin.module';
 import { OrganizationApplication } from 'sequelize/models/organizationApplications';
 import { ApplicationModule } from './application/application.module';
+import { Flow } from 'sequelize/models/flows';
+import { Booking } from 'sequelize/models/booking';
+import { TourModule } from './tour/tour.module';
+import { CategoryModule } from './category/category.module';
+import { FlowModule } from './flow/flow.module';
 
 @Module({
   imports: [
@@ -24,13 +29,16 @@ import { ApplicationModule } from './application/application.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      models: [User, Tour, TourCategory, Category, OrganizationApplication],
+      models: [User, Tour, TourCategory, Category, OrganizationApplication, Booking, Flow],
     }),
     CustomJwtModule,
     AuthModule,
     UserModule,
     AdminModule,
     ApplicationModule,
+    TourModule,
+    CategoryModule,
+    FlowModule,
   ],
 })
 export class AppModule {}

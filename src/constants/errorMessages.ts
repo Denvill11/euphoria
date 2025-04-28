@@ -9,5 +9,11 @@ export const Errors = {
   innOrOgrn: "Incorrect Inn or Ogrn",
   remoteApi: "Error on the remote API side",
   applicationExists: "Application exists",
-  
+  needImage: "You need to upload an image",
+  createTour: "Error creating tour",
+  tourNotFound: "TourNotFound",
+  forbidden: "Forbidden",
+  updateTour: "Error update tour",
+  getTours: "Error get tour",
+  deleteTour: "Delete Tour Error"
 }

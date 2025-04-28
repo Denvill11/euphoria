@@ -10,8 +10,8 @@ import { Errors } from 'src/constants/errorMessages';
 export class UserService {
   constructor(@InjectModel(User) private readonly userData: typeof User) {}
 
-  async addPhoto(file: Express.Multer.File, userId: number, userData: Partial<UpdatePersonalInfoDTO>) {
-    userData.avatarPath = file.path;
+  async changePersonalInfo(file: Express.Multer.File, userId: number, userData: Partial<UpdatePersonalInfoDTO>) {
+    userData.avatarPath = file?.path;
     try {
       await this.userData.update(
         userData,
@@ -20,6 +20,7 @@ export class UserService {
 
       return userData;
     } catch (error) {
+      //TODO add custom error message
       throw new HttpException('', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
