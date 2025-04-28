@@ -16,6 +16,7 @@ import { Booking } from 'sequelize/models/booking';
 import { TourModule } from './tour/tour.module';
 import { CategoryModule } from './category/category.module';
 import { FlowModule } from './flow/flow.module';
+import { BookingModule } from './booking/booking.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { FlowModule } from './flow/flow.module';
     TourModule,
     CategoryModule,
     FlowModule,
+    BookingModule,
   ],
 })
 export class AppModule {}
