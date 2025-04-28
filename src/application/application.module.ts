@@ -4,12 +4,12 @@ import { OrganizationApplication } from 'sequelize/models/organizationApplicatio
 
 import { ApplicationController } from './application.controller';
 import { ApplicationService } from './application.service';
-
+import { User } from 'sequelize/models/user';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([
-      OrganizationApplication,
+      OrganizationApplication, User
     ])
   ],
   controllers: [ApplicationController],

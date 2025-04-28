@@ -2,7 +2,7 @@ import { Transform } from 'class-transformer';
 import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 import { Errors } from '../../constants/errorMessages'
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class RegisterUserDTO {
   @ApiProperty()
@@ -31,12 +31,12 @@ export class RegisterUserDTO {
   @Transform(({ value }) => value.trim())
   password: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @Transform(({ value }) => value.trim())
   patronymic?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value.trim())

@@ -15,27 +15,38 @@ import { Flow } from './flows';
 
 @Table({ tableName: 'tours' })
 export class Tour extends Model<Tour> {
-  @Column({ allowNull: false})
+  @Column({ allowNull: false })
   title: string;
 
   @Column({ allowNull: false })
   description: string;
 
-  @Column({ 
+  @Column({
     type: DataType.ARRAY(DataType.STRING),
-    allowNull: false 
+    allowNull: false
   })
   photos: string[];
 
   @Column({ allowNull: false })
   isAccommodation: boolean;
 
-  @Column({allowNull: false })
+  @Column({ allowNull: false })
   address: string;
-  
+
   @ForeignKey(() => User)
   @Column({ allowNull: false })
   authorId: number;
+
+  @Column({ allowNull: false, 
+    validate: { min: 1 } 
+  })
+  duration: number;
+
+  @Column({ 
+    allowNull: false,
+    defaultValue: false,
+  })
+  isActive: boolean;
 
   @BelongsTo(() => User)
   author: User;

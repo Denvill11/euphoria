@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { ImageUpload } from 'src/decorators/image-upload.decorator';
-import { User } from 'src/decorators/user-decorator';
+import { User, userTokenData } from 'src/decorators/user-decorator';
 import { AuthGuard } from 'src/guards/jwt-auth.guard';
 import { UserService } from './user.service';
 import { UpdatePersonalInfoDTO } from './dto/updateUserDto';
@@ -26,16 +26,16 @@ export class UserController {
   addPhoto(
     @UploadedFile() file: Express.Multer.File,
     @Body() userData: UpdatePersonalInfoDTO,
-    @User() userId: number,
+    @User() user: userTokenData,
   ) {
-    return this.userService.addPhoto(file, userId, userData);
+    return this.userService.changePersonalInfo(file, user.id, userData);
   }
 
   @Patch('/password') 
   updatePassword(
     @Body() passwordData: UpdatePasswordDTO,
-    @User() userId: number
+    @User() user: userTokenData
   ) {
-    return this.userService.updatePassword(passwordData, userId);
+    return this.userService.updatePassword(passwordData, user.id);
   }
 }
