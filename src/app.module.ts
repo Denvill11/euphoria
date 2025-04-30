@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -16,9 +16,19 @@ import { Booking } from 'sequelize/models/booking';
 import { TourModule } from './tour/tour.module';
 import { CategoryModule } from './category/category.module';
 import { FlowModule } from './flow/flow.module';
+import { BookingModule } from './booking/booking.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../..', 'uploads'),
+      serveRoot: '/uploads',
+      serveStaticOptions: {
+        fallthrough: false,
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -39,6 +49,7 @@ import { FlowModule } from './flow/flow.module';
     TourModule,
     CategoryModule,
     FlowModule,
+    BookingModule,
   ],
 })
 export class AppModule {}

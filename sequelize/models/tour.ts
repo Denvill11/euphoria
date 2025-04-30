@@ -42,6 +42,9 @@ export class Tour extends Model<Tour> {
   })
   duration: number;
 
+  @Column({ allowNull: false})
+  city: string;
+
   @Column({ 
     allowNull: false,
     defaultValue: false,

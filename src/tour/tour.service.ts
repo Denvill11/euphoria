@@ -90,7 +90,10 @@ export class TourService {
       isAccommodation?: boolean,
       categoryIds?: number[],
       startDate?: Date,
-      endDate?: Date
+      endDate?: Date,
+      city?: string,
+      durationFrom?: number,
+      durationTo?: number
     }
   ): Promise<Tour[]> {
     const offset = (page - 1) * limit;
@@ -101,21 +104,36 @@ export class TourService {
       where.title = { [Op.like]: `%${filters.title}%` };
     }
 
+    if (filters?.durationFrom !== undefined) {
+      where.duration = { [Op.gte]: filters.durationFrom };
+    }
+
+    if(filters?.durationTo !== undefined) {
+      where.duration = { [Op.lte]: filters.durationTo}
+    }
+
     if (filters?.isAccommodation !== undefined) {
       where.isAccommodation = filters.isAccommodation;
+    }
+
+    if(filters?.city) {
+      where.city = {
+        [Op.iLike]: `%${filters.city}%`
+      }
     }
 
     if (filters?.startDate || filters?.endDate) {
       where['$flows.startDate$'] = {};
       where['$flows.endDate$'] = {};
-
+    
       if (filters.startDate) {
-        where['$flows.startDate$'][Op.lte] = filters.startDate;
+        where['$flows.startDate$'][Op.gte] = filters.startDate;
       }
+    
       if (filters.endDate) {
-        where['$flows.endDate$'][Op.gte] = filters.endDate;
+        where['$flows.endDate$'][Op.lte] = filters.endDate;
       }
-    }
+    }    
 
     try {
       const include: any = [];
@@ -142,11 +160,22 @@ export class TourService {
         limit,
         offset,
         order: [['createdAt', 'DESC']],
-        include
+        include: [
+          {
+            model: Flow,
+            as: 'flows',
+          },
+          {
+            model: Category,
+            as: 'categories',
+            through: { attributes: [] },
+          },
+        ],
       });
 
       return tours;
     } catch (error) {
+      console.log(error); 
       throw new HttpException(Errors.getTours, HttpStatus.BAD_REQUEST);
     }
   }

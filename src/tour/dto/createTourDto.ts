@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, Min, ValidateNested } from 'class-validator';
+import { IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Min, ValidateNested } from 'class-validator';
+import { IsNotProfane } from 'src/pipes/isNotProfine';
 
 class FlowDTO {
   @ApiProperty()
@@ -26,11 +27,13 @@ export class CreateTourDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @IsNotProfane()
   title: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @IsNotProfane()
   description: string;
 
   @ApiProperty()  
@@ -40,6 +43,7 @@ export class CreateTourDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @IsNotProfane()
   address: string;
 
   @ApiProperty()
@@ -47,8 +51,15 @@ export class CreateTourDTO {
   @Min(1)
   duration: number;
 
-  @ApiProperty({ type: [Number] })
+  @ApiProperty()
+  @Type(() => String)
+  @Length(3, 25)
+  @IsNotProfane()
+  city: string;
+
+  @ApiPropertyOptional({ type: [Number] })
   @IsArray()
+  @IsOptional()
   @IsNumber({}, { each: true })
   @Type(() => Number)
   categoryIds: number[];
