@@ -11,6 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { Tour } from './tour';
 import { OrganizationApplication } from './organizationApplications';
 import { Booking } from './booking';
+import { decrypt, encrypt } from 'src/utils/encript';
 
 export enum UserRole {
   USER = 'user',
@@ -20,16 +21,43 @@ export enum UserRole {
 
 @Table({ tableName: 'users' })
 export class User extends Model<User> {
-  @Column({ allowNull: false, unique: true})
+  @Column({ allowNull: false, unique: true })
   email: string;
 
-  @Column({ allowNull: false, unique: true })
+  @Column({
+    allowNull: false,
+    get(this: User) {
+      const value = this.getDataValue('name');
+      return value ? decrypt(value) : null;
+    },
+    set(this: User, value: string) {
+      this.setDataValue('name', encrypt(value));
+    },
+  })
   name: string;
 
-  @Column({ allowNull: false })
+  @Column({
+    allowNull: false,
+    get(this: User) {
+      const value = this.getDataValue('surname');
+      return value ? decrypt(value) : null;
+    },
+    set(this: User, value: string) {
+      this.setDataValue('surname', encrypt(value));
+    },
+  })
   surname: string;
 
-  @Column({ allowNull: true })
+  @Column({
+    allowNull: true,
+    get(this: User) {
+      const value = this.getDataValue('patronymic');
+      return value ? decrypt(value) : null;
+    },
+    set(this: User, value: string) {
+      this.setDataValue('patronymic', encrypt(value));
+    },
+  })
   patronymic: string;
 
   @Column({ allowNull: false })
@@ -38,8 +66,8 @@ export class User extends Model<User> {
   @Column({ allowNull: true })
   avatarPath: string;
 
-  @Column({ allowNull: false, defaultValue: 'user', type: 'user_role' }) 
-  role: UserRole;  
+  @Column({ allowNull: false, defaultValue: 'user', type: 'user_role' })
+  role: UserRole;
 
   @BeforeCreate
   static async hashPassword(user: User) {

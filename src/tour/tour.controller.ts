@@ -5,6 +5,7 @@ import { Organizer } from 'src/guards/organizer.guard';
 import { User, userTokenData } from 'src/decorators/user-decorator';
 import { AuthGuard } from 'src/guards/jwt-auth.guard';
 import { ImageUpload } from 'src/decorators/image-upload.decorator';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
 @Controller('tour')
 export class TourController {
@@ -13,6 +14,7 @@ export class TourController {
   ) { }
 
   //TODO подумать про удаление файлов если произошла ошибка
+  @ApiBearerAuth()
   @Post()
   @ImageUpload({ singleFile: false, fieldName: 'photos' })
   @UseGuards(Organizer, AuthGuard)
@@ -24,6 +26,7 @@ export class TourController {
     return this.tourService.createTour(user.id, tourDto, files)
   }
 
+  @ApiBearerAuth()
   @Patch('/:tourId')
   @UseGuards(Organizer, AuthGuard)
   @ImageUpload({ singleFile: false, fieldName: 'photos' })
@@ -44,7 +47,10 @@ export class TourController {
     @Query('isAccommodation') isAccommodation?: boolean,
     @Query('categoryIds') categoryIds?: string,
     @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string
+    @Query('endDate') endDate?: string,
+    @Query('city') city?: string,
+    @Query('durationFrom') durationFrom?: number,
+    @Query('durationTo') durationTo?: number
   ) {
     const parsedCategoryIds = categoryIds
       ? categoryIds.split(',').map(id => parseInt(id, 10))
@@ -58,10 +64,14 @@ export class TourController {
       isAccommodation,
       categoryIds: parsedCategoryIds,
       startDate: parsedStartDate,
-      endDate: parsedEndDate
+      endDate: parsedEndDate,
+      city: city,
+      durationFrom,
+      durationTo,
     });
   }
 
+  @ApiBearerAuth()
   @Delete('/:tourId')
   @UseGuards(Organizer, AuthGuard)
   async deleteTour(

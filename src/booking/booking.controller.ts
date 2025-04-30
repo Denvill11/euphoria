@@ -5,7 +5,9 @@ import { User } from 'src/decorators/user-decorator';
 import { CreateBookingDTO } from './dto/createBookingDTO';
 import { UpdateBookingDTO } from './dto/updateBookingDTO';
 import { BookingService } from './booking.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('bookings')
 @UseGuards(AuthGuard)
 export class BookingController {
