@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { Tour } from './tour';
 import { OrganizationApplication } from './organizationApplications';
 import { Booking } from './booking';
-import { decrypt, encrypt } from 'src/utils/encript';
+import { decrypt, encrypt } from 'src/helpers/utils/encript';
 
 export enum UserRole {
   USER = 'user',

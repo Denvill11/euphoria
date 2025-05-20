@@ -10,13 +10,15 @@ import * as bcrypt from 'bcrypt';
 import { User, UserRole } from 'sequelize/models/user';
 import { LoginUserDTO } from './dto/loginUserDTO';
 import { RegisterUserDTO } from './dto/registerUserDTO';
-import { Errors } from '../constants/errorMessages';
+import { Errors } from '../helpers/constants/errorMessages';
+import { MailerService } from 'src/mailer/mailer.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User) private readonly userData: typeof User,
     private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async getUserInfo(userId: number) {
@@ -58,6 +60,11 @@ export class AuthService {
     const user = await this.userData.create(userDto as User);
     const token = await this.generateToken(user.id, user.dataValues.role);
     user.dataValues.password = '';
+
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await this.mailerService.sendVerificationCode(user.dataValues.email, verificationCode, userDto.name);
+
     return { user, token };
   }
 

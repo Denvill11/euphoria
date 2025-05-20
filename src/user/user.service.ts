@@ -4,7 +4,7 @@ import { User } from 'sequelize/models/user';
 import { UpdatePersonalInfoDTO } from './dto/updateUserDto';
 import { UpdatePasswordDTO } from './dto/updatePasswordDto';
 import * as bcrypt from 'bcrypt';
-import { Errors } from 'src/constants/errorMessages';
+import { Errors } from 'src/helpers/constants/errorMessages';
 
 @Injectable()
 export class UserService {
@@ -20,8 +20,7 @@ export class UserService {
 
       return userData;
     } catch (error) {
-      //TODO add custom error message
-      throw new HttpException('', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(Errors.userChangeError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

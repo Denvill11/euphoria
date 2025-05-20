@@ -6,9 +6,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { ImageUpload } from 'src/decorators/image-upload.decorator';
-import { User, userTokenData } from 'src/decorators/user-decorator';
-import { AuthGuard } from 'src/guards/jwt-auth.guard';
+import { ImageUpload } from 'src/helpers/decorators/image-upload.decorator';
+import { User, userTokenData } from 'src/helpers/decorators/user-decorator';
+import { AuthGuard } from 'src/helpers/guards/jwt-auth.guard';
 import { UserService } from './user.service';
 import { UpdatePersonalInfoDTO } from './dto/updateUserDto';
 import { UpdatePasswordDTO } from './dto/updatePasswordDto';

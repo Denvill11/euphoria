@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Patch, Query, UseGuards } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { ApiBearerAuth } from "@nestjs/swagger";
-import { AuthGuard } from "src/guards/jwt-auth.guard";
-import { Admin } from "src/guards/admin.guard";
+import { AuthGuard } from "src/helpers/guards/jwt-auth.guard";
+import { Admin } from "src/helpers/guards/admin.guard";
 import { UpdateUserRoleDTO } from './dto/updateUserRoleDTO';
-import { User, userTokenData } from "src/decorators/user-decorator";
+import { User, userTokenData } from "src/helpers/decorators/user-decorator";
 import { ApplicationStatus } from "sequelize/models/organizationApplications";
 
 @ApiBearerAuth()

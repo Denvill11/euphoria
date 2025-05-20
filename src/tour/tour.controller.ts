@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Query, UploadedFiles, UseGuards } from '@nestjs/common';
 import { TourService } from './tour.service';
 import { CreateTourDTO } from './dto/createTourDto';
-import { Organizer } from 'src/guards/organizer.guard';
-import { User, userTokenData } from 'src/decorators/user-decorator';
-import { AuthGuard } from 'src/guards/jwt-auth.guard';
-import { ImageUpload } from 'src/decorators/image-upload.decorator';
+import { Organizer } from 'src/helpers/guards/organizer.guard';
+import { User, userTokenData } from 'src/helpers/decorators/user-decorator';
+import { AuthGuard } from 'src/helpers/guards/jwt-auth.guard';
+import { ImageUpload } from 'src/helpers/decorators/image-upload.decorator';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
 @Controller('tour')

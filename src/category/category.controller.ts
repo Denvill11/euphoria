@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards } from '@nestjs/common';
 
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { Admin } from 'src/guards/admin.guard';
-import { ImageUpload } from 'src/decorators/image-upload.decorator';
+import { Admin } from 'src/helpers/guards/admin.guard';
+import { ImageUpload } from 'src/helpers/decorators/image-upload.decorator';
 import { CreateCategoryDTO } from './dto/createCategoryDTO';
 import { UpdateCategoryDTO } from './dto/updateCategoryDTO';
 import { CategoryService } from './category.service';

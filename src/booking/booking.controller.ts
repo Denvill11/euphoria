@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Put, Body, Param, UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'src/guards/jwt-auth.guard';
+import { AuthGuard } from 'src/helpers/guards/jwt-auth.guard';
 import { User as UserData } from 'sequelize/models/user';
-import { User } from 'src/decorators/user-decorator';
+import { User } from 'src/helpers/decorators/user-decorator';
 import { CreateBookingDTO } from './dto/createBookingDTO';
 import { UpdateBookingDTO } from './dto/updateBookingDTO';
 import { BookingService } from './booking.service';

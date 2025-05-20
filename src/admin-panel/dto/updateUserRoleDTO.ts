@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { UserRole } from 'sequelize/models/user';
-import { Errors } from 'src/constants/errorMessages';
+import { Errors } from 'src/helpers/constants/errorMessages';
 
 export class UpdateUserRoleDTO {
   @ApiProperty()

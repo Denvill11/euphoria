@@ -4,7 +4,7 @@ import { Flow } from 'sequelize/models/flows';
 import { BookingController } from './booking.controller';
 import { BookingService } from './booking.service';
 import { Booking } from 'sequelize/models/booking';
-import { User } from 'src/decorators/user-decorator';
+import { User } from 'src/helpers/decorators/user-decorator';
 
 @Module({
   controllers: [BookingController],

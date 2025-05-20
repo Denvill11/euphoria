@@ -3,8 +3,8 @@ import { InjectModel } from "@nestjs/sequelize";
 import axios from "axios";
 import { ApplicationStatus, OrganizationApplication, OrganizationStatus } from "sequelize/models/organizationApplications";
 import { User, UserRole } from "sequelize/models/user";
-import { Errors } from "src/constants/errorMessages";
-import { userTokenData } from "src/decorators/user-decorator";
+import { Errors } from "src/helpers/constants/errorMessages";
+import { userTokenData } from "src/helpers/decorators/user-decorator";
 
 export interface DadataOrganizationInfo {
   value: string;
