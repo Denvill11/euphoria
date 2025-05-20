@@ -15,5 +15,6 @@ export const Errors = {
   forbidden: "Forbidden",
   updateTour: "Error update tour",
   getTours: "Error get tour",
-  deleteTour: "Delete Tour Error"
+  deleteTour: "Delete Tour Error",
+  userChangeError: "Error when changing data"
 }

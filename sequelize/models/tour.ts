@@ -23,7 +23,7 @@ export class Tour extends Model<Tour> {
 
   @Column({
     type: DataType.ARRAY(DataType.STRING),
-    allowNull: false
+    allowNull: false,
   })
   photos: string[];
 
@@ -37,15 +37,13 @@ export class Tour extends Model<Tour> {
   @Column({ allowNull: false })
   authorId: number;
 
-  @Column({ allowNull: false, 
-    validate: { min: 1 } 
-  })
+  @Column({ allowNull: false, validate: { min: 1 } })
   duration: number;
 
-  @Column({ allowNull: false})
+  @Column({ allowNull: false })
   city: string;
 
-  @Column({ 
+  @Column({
     allowNull: false,
     defaultValue: false,
   })

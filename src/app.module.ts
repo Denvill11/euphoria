@@ -19,6 +19,7 @@ import { FlowModule } from './flow/flow.module';
 import { BookingModule } from './booking/booking.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { join } from 'path';
     CategoryModule,
     FlowModule,
     BookingModule,
+    MailerModule,
   ],
 })
 export class AppModule {}

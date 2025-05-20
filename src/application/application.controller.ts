@@ -1,12 +1,12 @@
 import { Controller, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth } from "@nestjs/swagger";
-import { AuthGuard } from "src/guards/jwt-auth.guard";
+import { AuthGuard } from "src/helpers/guards/jwt-auth.guard";
 
 import { ApplicationService } from "./application.service";
-import { User, userTokenData } from "src/decorators/user-decorator";
+import { User, userTokenData } from "src/helpers/decorators/user-decorator";
 import { ApplicationStatus, OrganizationStatus } from "sequelize/models/organizationApplications";
-import { Organizer } from "src/guards/organizer.guard";
-import { Admin } from "src/guards/admin.guard";
+import { Organizer } from "src/helpers/guards/organizer.guard";
+import { Admin } from "src/helpers/guards/admin.guard";
 
 
 @ApiBearerAuth()

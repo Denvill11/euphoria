@@ -1,11 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { FlowService } from './flow.service';
-import { AuthGuard } from 'src/guards/jwt-auth.guard';
+import { AuthGuard } from 'src/helpers/guards/jwt-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { CreateFlowDto } from './dto/createFlowDTO';
 import { UpdateFlowDto } from './dto/updateFlowDTO';
-import { Organizer } from 'src/guards/organizer.guard';
-import { User, userTokenData } from 'src/decorators/user-decorator';
+import { Organizer } from 'src/helpers/guards/organizer.guard';
+import { User, userTokenData } from 'src/helpers/decorators/user-decorator';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard)

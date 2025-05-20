@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Flow } from 'sequelize/models/flows';
 import { CreateFlowDto } from './dto/createFlowDTO';
 import { UpdateFlowDto } from './dto/updateFlowDTO';
-import { userTokenData } from 'src/decorators/user-decorator';
+import { userTokenData } from 'src/helpers/decorators/user-decorator';
 
 @Injectable()
 export class FlowService {

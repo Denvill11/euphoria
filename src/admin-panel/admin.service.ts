@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { Op } from "sequelize";
 import { User, UserRole } from "sequelize/models/user";
-import { Errors } from "src/constants/errorMessages";
+import { Errors } from "src/helpers/constants/errorMessages";
 
 
 @Injectable()
