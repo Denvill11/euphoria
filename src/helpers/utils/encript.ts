@@ -3,7 +3,8 @@ import * as crypto from 'crypto';
 require('dotenv').config();
 
 const algorithm = 'aes-256-cbc';
-const key = Buffer.from(process.env.ENCRYPTION_KEY!, 'hex');
+const testKey = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+const key = Buffer.from(process.env.NODE_ENV === 'test' ? testKey : (process.env.ENCRYPTION_KEY || testKey), 'hex');
 const ivLength = 16;
 
 export function encrypt(text: string): string {
