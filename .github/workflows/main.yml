@@ -113,11 +113,33 @@ jobs:
             cp docker-compose.prod.yml docker-compose.yml
           fi
           
-          # Проверить наличие .env файла
-          if [ ! -f .env ]; then
-            echo "Error: .env file not found!"
-            exit 1
-          fi
+          # Создать .env файл с переменными окружения
+          cat > .env << EOL
+          # Server Configuration
+          PORT=3000
+          NODE_ENV=production
+
+          # Database Configuration
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_DATABASE=${{ secrets.DB_DATABASE }}
+
+          # JWT Configuration
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION=24h
+
+          # Encryption Configuration
+          ENCRYPTION_KEY=${{ secrets.ENCRYPTION_KEY }}
+
+          # DaData Configuration
+          DADATA_TOKEN=${{ secrets.DADATA_TOKEN }}
+          DADATA_URL=${{ secrets.DADATA_URL }}
+
+          # File Upload Configuration
+          UPLOAD_DESTINATION=./uploads
+          EOL
           
           # Остановить старые контейнеры
           docker-compose down --remove-orphans
