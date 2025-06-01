@@ -35,8 +35,20 @@ RUN ls -la dist/src/
 # Create uploads directory
 RUN mkdir -p uploads
 
-# Copy environment variables
-COPY .env.example .env
+# Create default environment variables
+RUN echo "PORT=3000\n\
+NODE_ENV=production\n\
+DB_HOST=postgres\n\
+DB_PORT=5432\n\
+DB_USERNAME=postgres\n\
+DB_PASSWORD=postgres\n\
+DB_DATABASE=euphoria\n\
+JWT_SECRET=your-jwt-secret-key\n\
+JWT_EXPIRATION=24h\n\
+ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n\
+DADATA_TOKEN=your-dadata-token\n\
+DADATA_URL=https://api.dadata.ru/v2/suggest/party\n\
+UPLOAD_DESTINATION=./uploads" > .env
 
 EXPOSE 3000
 
