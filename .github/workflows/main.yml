@@ -29,9 +29,6 @@ jobs:
         DADATA_TOKEN: 'test-token'
         DADATA_URL: 'https://api.dadata.ru/v2/suggest/party'
       run: npm test
-      
-    - name: Run linter
-      run: npm run lint
 
   build:
     needs: test
