@@ -2,9 +2,8 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME}/euphoria:latest
+    restart: always
     ports:
       - "3001:3001"
     depends_on:
@@ -26,7 +25,6 @@ services:
       - ./uploads:/app/uploads
     networks:
       - gastro-network
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/health"]
       interval: 30s
@@ -36,8 +34,9 @@ services:
 
   postgres:
     image: postgres:16-alpine
+    restart: always
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"  # Only allow local connections
     environment:
       - POSTGRES_USER=${DB_USERNAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -46,7 +45,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - gastro-network
-    restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
       interval: 10s
@@ -56,13 +54,13 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: always
     ports:
-      - "6380:6379"
+      - "127.0.0.1:6380:6379"  # Only allow local connections
     volumes:
       - redis_data:/data
     networks:
       - gastro-network
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -76,5 +74,4 @@ volumes:
 
 networks:
   gastro-network:
-    driver: bridge
-  
+    driver: bridge 

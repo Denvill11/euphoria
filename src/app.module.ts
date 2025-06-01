@@ -25,6 +25,7 @@ import { TourFoodCategory } from 'sequelize/models/tours-food_categories';
 import { FoodCategory } from 'sequelize/models/food_categories';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -78,5 +79,6 @@ import { CacheModule } from '@nestjs/cache-manager';
     MailerModule,
     FoodCategoryModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule { }
