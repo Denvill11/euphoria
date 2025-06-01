@@ -31,6 +31,13 @@ describe('ApplicationService', () => {
   };
 
   beforeEach(async () => {
+    // Mock environment variables
+    process.env.DADATA_TOKEN = 'test-token';
+    process.env.DADATA_URL = 'https://api.dadata.ru/v2/suggest/party';
+
+    // Reset all mocks
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationService,
@@ -57,6 +64,17 @@ describe('ApplicationService', () => {
     service = module.get<ApplicationService>(ApplicationService);
     applicationModel = module.get(getModelToken(OrganizationApplication));
     userModel = module.get(getModelToken(User));
+
+    // Mock axios default implementation
+    (axios as jest.MockedFunction<typeof axios>).mockImplementation((config: any) => {
+      return Promise.resolve({ data: {} });
+    });
+  });
+
+  afterEach(() => {
+    // Clean up environment variables
+    delete process.env.DADATA_TOKEN;
+    delete process.env.DADATA_URL;
   });
 
   it('should be defined', () => {
@@ -90,7 +108,11 @@ describe('ApplicationService', () => {
       applicationModel.findOne.mockResolvedValue(null);
       applicationModel.create.mockResolvedValue({ id: 1 });
       applicationModel.update.mockResolvedValue([1, [mockApplication]]);
-      mockedAxios.post.mockResolvedValue(mockDadataResponse);
+      
+      // Mock axios for this specific test
+      (axios as jest.MockedFunction<typeof axios>).mockImplementationOnce((config: any) => {
+        return Promise.resolve(mockDadataResponse);
+      });
 
       const result = await service.createApplication(1, '1234567890');
       expect(result).toEqual([mockApplication]);
@@ -99,7 +121,16 @@ describe('ApplicationService', () => {
 
   describe('getCompanyData', () => {
     it('should throw error on API failure', async () => {
-      mockedAxios.post.mockRejectedValue(new Error());
+      // Mock axios to reject with proper error structure
+      (axios as jest.MockedFunction<typeof axios>).mockImplementationOnce((config: any) => {
+        return Promise.reject({
+          response: {
+            data: 'API Error',
+            status: 400
+          }
+        });
+      });
+
       await expect(service.getCompanyData('1234567890')).rejects.toThrow(HttpException);
     });
 
@@ -116,7 +147,11 @@ describe('ApplicationService', () => {
           }],
         },
       };
-      mockedAxios.post.mockResolvedValue(mockResponse);
+      
+      // Mock axios for this specific test
+      (axios as jest.MockedFunction<typeof axios>).mockImplementationOnce((config: any) => {
+        return Promise.resolve(mockResponse);
+      });
 
       const result = await service.getCompanyData('1234567890');
       expect(result).toEqual(mockResponse.data.suggestions[0]);

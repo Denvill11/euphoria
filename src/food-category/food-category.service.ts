@@ -14,7 +14,7 @@ export class FoodCategoryService {
     limit?: number;
     offset?: number;
   }) {
-    const { search = '', limit, offset } = params;
+    const { search = '', limit = 10, offset = 0 } = params;
 
     const queryOptions: any = {
       where: {
@@ -23,24 +23,17 @@ export class FoodCategoryService {
         },
       },
       order: [['name', 'ASC']],
+      limit,
+      offset,
     };
-
-    // Добавляем limit и offset только если они определены и являются числами
-    if (typeof limit === 'number' && !isNaN(limit)) {
-      queryOptions.limit = limit;
-    }
-
-    if (typeof offset === 'number' && !isNaN(offset)) {
-      queryOptions.offset = offset;
-    }
 
     const { rows, count } = await this.foodData.findAndCountAll(queryOptions);
 
     return {
       data: rows,
       total: count,
-      limit: queryOptions.limit || null,
-      offset: queryOptions.offset || 0,
+      limit,
+      offset,
     };
   }
 }
