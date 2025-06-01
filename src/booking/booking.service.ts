@@ -4,6 +4,7 @@ import { Booking } from 'sequelize/models/booking';
 import { CreateBookingDTO } from './dto/createBookingDTO';
 import { UpdateBookingDTO } from './dto/updateBookingDTO';
 import { Flow } from 'sequelize/models/flows';
+import { Errors } from 'src/helpers/constants/errorMessages';
 
 @Injectable()
 export class BookingService {
@@ -12,7 +13,10 @@ export class BookingService {
     @InjectModel(Flow) private readonly flowRepo: typeof Flow,
   ) {}
 
-  async createBooking(userId: number, createBookingDTO: CreateBookingDTO): Promise<Booking> {
+  async createBooking(
+    userId: number,
+    createBookingDTO: CreateBookingDTO,
+  ): Promise<Booking> {
     const { participant, flowId } = createBookingDTO;
 
     const flow = await this.flowRepo.findByPk(flowId);
@@ -21,7 +25,7 @@ export class BookingService {
     }
 
     if (flow.participant <= 0) {
-      throw new HttpException('No available spots in this flow', HttpStatus.BAD_REQUEST);
+      throw new HttpException(Errors.noPlaces, HttpStatus.BAD_REQUEST);
     }
 
     const booking = await this.bookingRepo.create({
@@ -36,7 +40,10 @@ export class BookingService {
     return booking;
   }
 
-  async updateBooking(bookingId: number, updateBookingDTO: UpdateBookingDTO): Promise<Booking> {
+  async updateBooking(
+    bookingId: number,
+    updateBookingDTO: UpdateBookingDTO,
+  ): Promise<Booking> {
     const { isActive, participant } = updateBookingDTO;
 
     const booking = await this.bookingRepo.findByPk(bookingId);
@@ -56,7 +63,10 @@ export class BookingService {
 
     if (isActive && !booking.isActive) {
       if (flow.participant <= 0) {
-        throw new HttpException('No available spots in this flow', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'No available spots in this flow',
+          HttpStatus.BAD_REQUEST,
+        );
       }
       flow.participant -= participant;
       await flow.save();
@@ -66,7 +76,7 @@ export class BookingService {
     if (participant !== undefined) {
       booking.participant = participant;
     }
-    
+
     await booking.save();
     return booking;
   }

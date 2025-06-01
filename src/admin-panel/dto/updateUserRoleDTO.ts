@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { UserRole } from 'sequelize/models/user';
-import { Errors } from 'src/helpers/constants/errorMessages';
+import { UserRole } from '../../../sequelize/models/user';
+import { Errors } from '../../helpers/constants/errorMessages';
 
 export class UpdateUserRoleDTO {
   @ApiProperty()
@@ -10,5 +10,5 @@ export class UpdateUserRoleDTO {
   @IsEnum(UserRole, {
     message: `${Errors.isNotRoleValue}`,
   })
-  role: UserRole
+  role: UserRole;
 }

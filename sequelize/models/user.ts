@@ -11,7 +11,7 @@ import * as bcrypt from 'bcrypt';
 import { Tour } from './tour';
 import { OrganizationApplication } from './organizationApplications';
 import { Booking } from './booking';
-import { decrypt, encrypt } from 'src/helpers/utils/encript';
+import { decrypt, encrypt } from '../../src/helpers/utils/encript';
 
 export enum UserRole {
   USER = 'user',
@@ -68,6 +68,9 @@ export class User extends Model<User> {
 
   @Column({ allowNull: false, defaultValue: 'user', type: 'user_role' })
   role: UserRole;
+
+  @Column({ allowNull: false, defaultValue: false })
+  isEmailVerified: boolean;
 
   @BeforeCreate
   static async hashPassword(user: User) {

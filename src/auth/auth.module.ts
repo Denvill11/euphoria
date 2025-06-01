@@ -7,12 +7,7 @@ import { AuthService } from './auth.service';
 import { MailerModule } from 'src/mailer/mailer.module';
 
 @Module({
-  imports: [
-    SequelizeModule.forFeature([
-      User,
-    ]),
-    MailerModule,
-  ],
+  imports: [SequelizeModule.forFeature([User]), MailerModule],
   controllers: [AuthController],
   providers: [AuthService],
 })

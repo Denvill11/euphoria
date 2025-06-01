@@ -1,9 +1,10 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, createParamDecorator } from '@nestjs/common';
+
 import { UserRole } from 'sequelize/models/user';
 
-export interface userTokenData { 
-  id: number,
-  role: UserRole
+export interface userTokenData {
+  id: number;
+  role: UserRole;
 }
 
 export const User = createParamDecorator(

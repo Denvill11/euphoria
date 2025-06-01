@@ -1,4 +1,12 @@
-import { Controller, Post, Get, Put, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Put,
+  Body,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from 'src/helpers/guards/jwt-auth.guard';
 import { User as UserData } from 'sequelize/models/user';
 import { User } from 'src/helpers/decorators/user-decorator';

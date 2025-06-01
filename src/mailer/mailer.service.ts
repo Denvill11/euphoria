@@ -13,7 +13,11 @@ export class MailerService {
     },
   });
 
-  async sendVerificationCode(toEmail: string, code: string, name?: string): Promise<void> {
+  async sendVerificationCode(
+    toEmail: string,
+    code: string,
+    name?: string,
+  ): Promise<void> {
     const mailOptions = {
       from: '"Euphoria" <euphoria-mail@mail.ru>',
       to: toEmail,

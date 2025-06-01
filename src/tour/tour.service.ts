@@ -10,15 +10,18 @@ import { Category } from 'sequelize/models/category';
 import { Flow } from 'sequelize/models/flows';
 import * as fs from 'fs/promises';
 
-
 @Injectable()
 export class TourService {
   constructor(
     @InjectModel(Tour) private readonly tourRepo: typeof Tour,
     @InjectModel(Flow) private readonly flowRepo: typeof Flow,
-  ) { }
+  ) {}
 
-  async createTour(userId: number, tourData: CreateTourDTO, photos: Express.Multer.File[]): Promise<Tour> {
+  async createTour(
+    userId: number,
+    tourData: CreateTourDTO,
+    photos: Express.Multer.File[],
+  ): Promise<Tour> {
     const pathsFileNames = photos.map((el) => el.path);
 
     if (!pathsFileNames.length) {
@@ -28,11 +31,13 @@ export class TourService {
     const { categoryIds, flows, ...tourFields } = tourData;
 
     try {
-      const tour = await this.tourRepo.build({
-        ...tourFields,
-        authorId: userId,
-        photos: pathsFileNames,
-      } as any).save();
+      const tour = await this.tourRepo
+        .build({
+          ...tourFields,
+          authorId: userId,
+          photos: pathsFileNames,
+        } as any)
+        .save();
 
       if (categoryIds?.length) {
         await tour.$set('categories', categoryIds);
@@ -42,14 +47,14 @@ export class TourService {
         for (const flow of flows) {
           await this.flowRepo.create({
             ...flow,
-            tourId: tour.id
+            tourId: tour.id,
           } as Flow);
         }
       }
 
       return tour;
     } catch (error) {
-      try{ 
+      try {
         for (const file of pathsFileNames) {
           await fs.unlink(file);
         }
@@ -58,7 +63,12 @@ export class TourService {
     }
   }
 
-  async updateTour(user: userTokenData, tourData: CreateTourDTO, photos: Express.Multer.File[], tourId: number): Promise<Tour> {
+  async updateTour(
+    user: userTokenData,
+    tourData: CreateTourDTO,
+    photos: Express.Multer.File[],
+    tourId: number,
+  ): Promise<Tour> {
     const tour = await this.tourRepo.findByPk(tourId);
 
     if (!tour) {
@@ -74,7 +84,8 @@ export class TourService {
 
     tour.dataValues.title = tourData.title ?? tour.title;
     tour.dataValues.description = tourData.description ?? tour.description;
-    tour.dataValues.isAccommodation = tourData.isAccommodation ?? tour.isAccommodation;
+    tour.dataValues.isAccommodation =
+      tourData.isAccommodation ?? tour.isAccommodation;
     tour.dataValues.address = tourData.address ?? tour.address;
     tour.dataValues.duration = tourData.duration ?? tour.duration;
 
@@ -90,15 +101,15 @@ export class TourService {
     page: number = 1,
     limit: number = 10,
     filters?: {
-      title?: string,
-      isAccommodation?: boolean,
-      categoryIds?: number[],
-      startDate?: Date,
-      endDate?: Date,
-      city?: string,
-      durationFrom?: number,
-      durationTo?: number
-    }
+      title?: string;
+      isAccommodation?: boolean;
+      categoryIds?: number[];
+      startDate?: Date;
+      endDate?: Date;
+      city?: string;
+      durationFrom?: number;
+      durationTo?: number;
+    },
   ): Promise<Tour[]> {
     const offset = (page - 1) * limit;
 
@@ -108,12 +119,17 @@ export class TourService {
       where.title = { [Op.like]: `%${filters.title}%` };
     }
 
-    if (filters?.durationFrom !== undefined) {
-      where.duration = { [Op.gte]: filters.durationFrom };
-    }
-
-    if (filters?.durationTo !== undefined) {
-      where.duration = { [Op.lte]: filters.durationTo }
+    if (
+      filters?.durationFrom !== undefined ||
+      filters?.durationTo !== undefined
+    ) {
+      where.duration = {};
+      if (filters.durationFrom !== undefined) {
+        where.duration[Op.gte] = filters.durationFrom;
+      }
+      if (filters.durationTo !== undefined) {
+        where.duration[Op.lte] = filters.durationTo;
+      }
     }
 
     if (filters?.isAccommodation !== undefined) {
@@ -122,8 +138,8 @@ export class TourService {
 
     if (filters?.city) {
       where.city = {
-        [Op.iLike]: `%${filters.city}%`
-      }
+        [Op.iLike]: `%${filters.city}%`,
+      };
     }
 
     if (filters?.startDate || filters?.endDate) {
@@ -147,7 +163,7 @@ export class TourService {
           model: Category,
           where: { id: filters.categoryIds },
           through: { attributes: [] },
-          required: true
+          required: true,
         });
       }
 
@@ -155,7 +171,7 @@ export class TourService {
         include.push({
           model: Flow,
           where: {},
-          required: true
+          required: true,
         });
       }
 
@@ -191,7 +207,7 @@ export class TourService {
       throw new HttpException(Errors.tourNotFound, HttpStatus.NOT_FOUND);
     }
 
-    this.checkAcess(tour, user)
+    this.checkAcess(tour, user);
 
     try {
       await tour.destroy();

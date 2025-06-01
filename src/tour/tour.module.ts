@@ -8,10 +8,6 @@ import { Flow } from 'sequelize/models/flows';
 @Module({
   controllers: [TourController],
   providers: [TourService],
-  imports: [
-    SequelizeModule.forFeature([
-      Tour, Flow,
-    ])
-  ]
+  imports: [SequelizeModule.forFeature([Tour, Flow])],
 })
-export class TourModule { }
+export class TourModule {}

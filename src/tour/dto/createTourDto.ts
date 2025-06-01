@@ -1,6 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString, Length, Min, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { IsNotProfane } from 'src/helpers/pipes/isNotProfine';
 
 class FlowDTO {
@@ -36,7 +46,7 @@ export class CreateTourDTO {
   @IsNotProfane()
   description: string;
 
-  @ApiProperty()  
+  @ApiProperty()
   @Type(() => Boolean)
   isAccommodation: boolean;
 

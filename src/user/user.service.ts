@@ -10,17 +10,21 @@ import { Errors } from 'src/helpers/constants/errorMessages';
 export class UserService {
   constructor(@InjectModel(User) private readonly userData: typeof User) {}
 
-  async changePersonalInfo(file: Express.Multer.File, userId: number, userData: Partial<UpdatePersonalInfoDTO>) {
+  async changePersonalInfo(
+    file: Express.Multer.File,
+    userId: number,
+    userData: Partial<UpdatePersonalInfoDTO>,
+  ) {
     userData.avatarPath = file?.path;
     try {
-      await this.userData.update(
-        userData,
-        { where: { id: userId }},
-      );
+      await this.userData.update(userData, { where: { id: userId } });
 
       return userData;
-    } catch (error) {
-      throw new HttpException(Errors.userChangeError, HttpStatus.INTERNAL_SERVER_ERROR);
+    } catch {
+      throw new HttpException(
+        Errors.userChangeError,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -29,22 +33,28 @@ export class UserService {
     if (!user) {
       throw new HttpException(Errors.userNotFound, HttpStatus.BAD_REQUEST);
     }
-  
-    const isMatch = await bcrypt.compare(passwordData.oldPassword, user.dataValues.password);
+
+    const isMatch = await bcrypt.compare(
+      passwordData.oldPassword,
+      user.dataValues.password,
+    );
     if (!isMatch) {
-      throw new HttpException(Errors.oldPasswordIncorrect, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        Errors.oldPasswordIncorrect,
+        HttpStatus.BAD_REQUEST,
+      );
     }
-  
+
     const hashedNewPassword = await bcrypt.hash(
       passwordData.newPassword,
-      Number(process.env.SALT_ROUNDS)
+      Number(process.env.SALT_ROUNDS),
     );
-  
+
     await this.userData.update(
       { password: hashedNewPassword },
-      { where: { id: userId } }
+      { where: { id: userId } },
     );
-  
+
     return { message: 'Password updated successfully' };
   }
 }
