@@ -36,7 +36,7 @@ RUN ls -la dist/src/
 RUN mkdir -p uploads
 
 # Copy environment variables
-COPY .env .env
+COPY .env.example .env
 
 EXPOSE 3000
 
