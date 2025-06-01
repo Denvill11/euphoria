@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFile,
+  UseGuards,
+} from '@nestjs/common';
 
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { Admin } from 'src/helpers/guards/admin.guard';
@@ -29,7 +39,7 @@ export class CategoryController {
   async createCategory(
     @Body() createCategoryDto: CreateCategoryDTO,
     @UploadedFile() file: Express.Multer.File,
-) {
+  ) {
     return this.categoryService.createCategory(createCategoryDto, file);
   }
 

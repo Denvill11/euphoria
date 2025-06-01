@@ -20,6 +20,11 @@ import { BookingModule } from './booking/booking.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MailerModule } from './mailer/mailer.module';
+import { FoodCategoryModule } from './food-category/food-category.module';
+import { TourFoodCategory } from 'sequelize/models/tours-food_categories';
+import { FoodCategory } from 'sequelize/models/food_categories';
+import * as redisStore from 'cache-manager-redis-store';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -40,7 +45,26 @@ import { MailerModule } from './mailer/mailer.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      models: [User, Tour, TourCategory, Category, OrganizationApplication, Booking, Flow],
+      models: [
+        User,
+        Tour,
+        TourCategory,
+        Category,
+        OrganizationApplication,
+        Booking,
+        Flow,
+        TourFoodCategory,
+        FoodCategory,
+      ],
+    }),
+    CacheModule.registerAsync({
+      useFactory: () => ({
+        store: redisStore,
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+        ttl: 120000,
+      }),
+      isGlobal: true,
     }),
     CustomJwtModule,
     AuthModule,
@@ -52,6 +76,7 @@ import { MailerModule } from './mailer/mailer.module';
     FlowModule,
     BookingModule,
     MailerModule,
+    FoodCategoryModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

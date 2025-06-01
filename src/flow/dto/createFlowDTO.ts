@@ -1,6 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDateString, IsInt, IsNotEmpty, IsNumber, IsOptional, Min } from 'class-validator';
+import {
+  IsDateString,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  Min,
+} from 'class-validator';
 
 export class CreateFlowDto {
   @ApiProperty()

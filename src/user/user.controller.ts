@@ -17,12 +17,10 @@ import { UpdatePasswordDTO } from './dto/updatePasswordDto';
 @UseGuards(AuthGuard)
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Patch('/personal-info')
-  @ImageUpload({singleFile: true, fieldName: 'avatar'})
+  @ImageUpload({ singleFile: true, fieldName: 'avatar' })
   addPhoto(
     @UploadedFile() file: Express.Multer.File,
     @Body() userData: UpdatePersonalInfoDTO,
@@ -31,10 +29,10 @@ export class UserController {
     return this.userService.changePersonalInfo(file, user.id, userData);
   }
 
-  @Patch('/password') 
+  @Patch('/password')
   updatePassword(
     @Body() passwordData: UpdatePasswordDTO,
-    @User() user: userTokenData
+    @User() user: userTokenData,
   ) {
     return this.userService.updatePassword(passwordData, user.id);
   }

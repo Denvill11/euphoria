@@ -1,4 +1,17 @@
-import { Body, Controller, Delete, Get, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Query, UploadedFiles, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseBoolPipe,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+  UploadedFiles,
+  UseGuards,
+} from '@nestjs/common';
 import { TourService } from './tour.service';
 import { CreateTourDTO } from './dto/createTourDto';
 import { Organizer } from 'src/helpers/guards/organizer.guard';
@@ -9,11 +22,8 @@ import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
 @Controller('tour')
 export class TourController {
-  constructor(
-    private readonly tourService: TourService
-  ) { }
+  constructor(private readonly tourService: TourService) {}
 
-  //TODO подумать про удаление файлов если произошла ошибка
   @ApiBearerAuth()
   @Post()
   @ImageUpload({ singleFile: false, fieldName: 'photos' })
@@ -23,7 +33,7 @@ export class TourController {
     @Body() tourDto: CreateTourDTO,
     @User() user: userTokenData,
   ) {
-    return this.tourService.createTour(user.id, tourDto, files)
+    return this.tourService.createTour(user.id, tourDto, files);
   }
 
   @ApiBearerAuth()
@@ -34,7 +44,7 @@ export class TourController {
     @UploadedFiles() files: Express.Multer.File[],
     @Body() tourDto: CreateTourDTO,
     @User() user: userTokenData,
-    @Param('tourId', ParseIntPipe) tourId: number
+    @Param('tourId', ParseIntPipe) tourId: number,
   ) {
     return this.tourService.updateTour(user, tourDto, files, tourId);
   }
@@ -50,10 +60,10 @@ export class TourController {
     @Query('endDate') endDate?: string,
     @Query('city') city?: string,
     @Query('durationFrom') durationFrom?: number,
-    @Query('durationTo') durationTo?: number
+    @Query('durationTo') durationTo?: number,
   ) {
     const parsedCategoryIds = categoryIds
-      ? categoryIds.split(',').map(id => parseInt(id, 10))
+      ? categoryIds.split(',').map((id) => parseInt(id, 10))
       : undefined;
 
     const parsedStartDate = startDate ? new Date(startDate) : undefined;
@@ -76,7 +86,7 @@ export class TourController {
   @UseGuards(Organizer, AuthGuard)
   async deleteTour(
     @User() user: userTokenData,
-    @Param('tourId') tourId: number
+    @Param('tourId') tourId: number,
   ) {
     return this.tourService.deleteTour(user, tourId);
   }

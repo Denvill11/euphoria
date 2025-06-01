@@ -1,16 +1,14 @@
 import {
-  applyDecorators,
-  UseInterceptors,
   BadRequestException,
+  UseInterceptors,
+  applyDecorators,
 } from '@nestjs/common';
-import {
-  FileInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+
+import * as crypto from 'crypto';
+import * as fs from 'fs';
 import { diskStorage } from 'multer';
 import * as path from 'path';
-import * as fs from 'fs';
-import * as crypto from 'crypto';
 
 interface ImageUploadOptions {
   fieldName?: string;

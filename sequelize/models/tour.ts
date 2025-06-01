@@ -12,6 +12,8 @@ import { User } from './user';
 import { Category } from './category';
 import { TourCategory } from './tour-category';
 import { Flow } from './flows';
+import { FoodCategory } from './food_categories';
+import { TourFoodCategory } from './tours-food_categories';
 
 @Table({ tableName: 'tours' })
 export class Tour extends Model<Tour> {
@@ -57,4 +59,7 @@ export class Tour extends Model<Tour> {
 
   @HasMany(() => Flow)
   flows: Flow[];
+
+  @BelongsToMany(() => FoodCategory, () => TourFoodCategory)
+  foodCategories: FoodCategory[];
 }

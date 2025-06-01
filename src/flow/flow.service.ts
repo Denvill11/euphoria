@@ -25,7 +25,11 @@ export class FlowService {
     return flow;
   }
 
-  async update(id: number, dto: UpdateFlowDto, user: userTokenData): Promise<Flow> {
+  async update(
+    id: number,
+    dto: UpdateFlowDto,
+    user: userTokenData,
+  ): Promise<Flow> {
     const flow = await this.findOne(id);
     return flow.update(dto);
   }

@@ -9,10 +9,6 @@ import { User } from 'src/helpers/decorators/user-decorator';
 @Module({
   controllers: [BookingController],
   providers: [BookingService],
-  imports: [
-    SequelizeModule.forFeature([
-      Flow, Booking, User
-    ])
-  ]
+  imports: [SequelizeModule.forFeature([Flow, Booking, User])],
 })
-export class BookingModule { }
+export class BookingModule {}
