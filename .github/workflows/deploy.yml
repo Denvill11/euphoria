@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  DOCKER_IMAGE: denvill11/euphoria
+  DOCKER_IMAGE: denvill/euphoria
   DOCKER_TAG: latest
 
 jobs:
