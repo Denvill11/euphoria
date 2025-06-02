@@ -5,7 +5,7 @@ import {
   UploadedFile,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { ImageUpload } from 'src/helpers/decorators/image-upload.decorator';
 import { User, userTokenData } from 'src/helpers/decorators/user-decorator';
 import { AuthGuard } from 'src/helpers/guards/jwt-auth.guard';
@@ -21,6 +21,7 @@ export class UserController {
 
   @Patch('/personal-info')
   @ImageUpload({ singleFile: true, fieldName: 'avatar' })
+  @ApiConsumes('multipart/form-data')
   addPhoto(
     @UploadedFile() file: Express.Multer.File,
     @Body() userData: UpdatePersonalInfoDTO,
