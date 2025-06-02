@@ -29,26 +29,25 @@ RUN npm ci --only=production
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/sequelize ./sequelize
 
-# Create init script
-RUN echo '#!/bin/sh\n\
-\n\
-# Wait for database to be ready\n\
-echo "Waiting for database to be ready..."\n\
-while ! nc -z $DB_HOST $DB_PORT; do\n\
-  sleep 1\n\
-done\n\
-echo "Database is ready!"\n\
-\n\
-# Apply database migrations\n\
-echo "Applying database migrations..."\n\
-cd /app && npx sequelize-cli db:migrate --config sequelize/config.js --migrations-path sequelize/migrations\n\
-\n\
-# Start the application\n\
-echo "Starting the application..."\n\
-exec node /app/dist/src/main.js' > /app/init.sh
-
-# Make init script executable
-RUN chmod +x /app/init.sh
+# Create init script with proper line endings
+RUN echo '#!/bin/sh' > /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Wait for database to be ready' >> /app/init.sh && \
+    echo 'echo "Waiting for database to be ready..."' >> /app/init.sh && \
+    echo 'while ! nc -z $DB_HOST $DB_PORT; do' >> /app/init.sh && \
+    echo '  sleep 1' >> /app/init.sh && \
+    echo 'done' >> /app/init.sh && \
+    echo 'echo "Database is ready!"' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Apply database migrations' >> /app/init.sh && \
+    echo 'echo "Applying database migrations..."' >> /app/init.sh && \
+    echo 'cd /app && npx sequelize-cli db:migrate --config sequelize/config.js --migrations-path sequelize/migrations' >> /app/init.sh && \
+    echo '' >> /app/init.sh && \
+    echo '# Start the application' >> /app/init.sh && \
+    echo 'echo "Starting the application..."' >> /app/init.sh && \
+    echo 'exec node /app/dist/src/main.js' >> /app/init.sh && \
+    chmod +x /app/init.sh && \
+    cat /app/init.sh
 
 # Create uploads directory
 RUN mkdir -p uploads
@@ -73,4 +72,5 @@ UPLOAD_DESTINATION=./uploads" > .env
 
 EXPOSE 3001
 
-CMD ["/app/init.sh"] 
+# Use shell form to ensure proper script execution
+CMD /bin/sh /app/init.sh 
