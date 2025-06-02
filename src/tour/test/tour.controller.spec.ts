@@ -3,6 +3,7 @@ import { TourController } from '../tour.controller';
 import { TourService } from '../tour.service';
 import { CreateTourDTO } from '../dto/createTourDto';
 import { UserRole } from '../../../sequelize/models/user';
+import { userTokenData } from 'src/helpers/decorators/user-decorator';
 
 jest.mock('../../helpers/guards/jwt-auth.guard', () => ({
   AuthGuard: jest.fn().mockImplementation(() => ({
@@ -127,7 +128,7 @@ describe('TourController', () => {
 
       mockTourService.getAllTours.mockResolvedValue(expectedResult);
 
-      const result = await controller.getAllTours();
+      const result = await controller.getAllTours({} as userTokenData, 1, 10);
 
       expect(result).toEqual(expectedResult);
       expect(service.getAllTours).toHaveBeenCalledWith(1, 10, {
@@ -139,6 +140,8 @@ describe('TourController', () => {
         city: undefined,
         durationFrom: undefined,
         durationTo: undefined,
+        isCreatedByMe: undefined,
+        userId: undefined
       });
     });
 
@@ -170,6 +173,7 @@ describe('TourController', () => {
       mockTourService.getAllTours.mockResolvedValue(expectedResult);
 
       const result = await controller.getAllTours(
+        undefined,
         filters.page,
         filters.limit,
         filters.title,
