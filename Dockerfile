@@ -16,8 +16,8 @@ RUN npm run build && ls -la dist/src/
 # Production stage
 FROM node:20-alpine
 
-# Install wget for health checks
-RUN apk add --no-cache wget
+# Install wget for health checks and netcat for database check
+RUN apk add --no-cache wget netcat-openbsd
 
 WORKDIR /app
 
@@ -28,6 +28,10 @@ RUN npm ci --only=production
 # Copy built application
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/sequelize ./sequelize
+COPY --from=builder /app/scripts/init.sh ./init.sh
+
+# Make init script executable
+RUN chmod +x ./init.sh
 
 # Verify dist directory contents
 RUN ls -la dist/src/
@@ -36,26 +40,23 @@ RUN ls -la dist/src/
 RUN mkdir -p uploads
 
 # Create default environment variables
-RUN echo "PORT=3000\n\
+RUN echo "PORT=3001\n\
 NODE_ENV=production\n\
 DB_HOST=postgres\n\
 DB_PORT=5432\n\
-DB_USERNAME=postgres\n\
-DB_PASSWORD=postgres\n\
-DB_DATABASE=euphoria\n\
-JWT_SECRET=your-jwt-secret-key\n\
-JWT_EXPIRATION=24h\n\
-ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n\
-DADATA_TOKEN=your-dadata-token\n\
-DADATA_URL=https://api.dadata.ru/v2/suggest/party\n\
-UPLOAD_DESTINATION=./uploads\n\
+DB_USERNAME=gastro-tour-admin\n\
+DB_PASSWORD=pDfhtPZ81203\n\
+DB_DATABASE=gastro-tour\n\
+REDIS_HOST=redis\n\
+REDIS_PORT=6380\n\
+REDIS_APPROVE_KEY=b4eb30ba-9c11-436d-82d1-d6b7107d0091\n\
+REDIS_TTL=3600\n\
 EMAILER_USER=euphoria-mail@mail.ru\n\
 EMAILER_PASSWORD=2ms8kwgGjQ1fqvvijZbN\n\
-REDIS_APPROVE_KEY=b4eb30ba-9c11-436d-82d1-d6b7107d0091\n\
-REDDIS_TTL=12000\n\
 PRIVATE_KEY=secret\n\
-SALT_ROUNDS=10" > .env
+SALT_ROUNDS=5\n\
+UPLOAD_DESTINATION=./uploads" > .env
 
-EXPOSE 3000
+EXPOSE 3001
 
-CMD ["node", "dist/src/main.js"] 
+CMD ["./init.sh"] 

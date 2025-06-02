@@ -40,15 +40,15 @@ NODE_ENV=production
 # Database
 DB_HOST=postgres
 DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_DATABASE=euphoria
+DB_USERNAME=gastro-tour-admin
+DB_PASSWORD=pDfhtPZ81203
+DB_DATABASE=gastro-tour
 
 # Redis
 REDIS_HOST=redis
 REDIS_PORT=6380
 REDIS_APPROVE_KEY=b4eb30ba-9c11-436d-82d1-d6b7107d0091
-REDDIS_TTL=12000
+REDIS_TTL=12000
 
 # Email
 EMAILER_USER=euphoria-mail@mail.ru
@@ -58,11 +58,8 @@ EMAILER_PASSWORD=2ms8kwgGjQ1fqvvijZbN
 PRIVATE_KEY=secret
 
 # Other
-ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
-SALT_ROUNDS=10
+SALT_ROUNDS=5
 UPLOAD_DESTINATION=./uploads
-DADATA_TOKEN=your-dadata-token
-DADATA_URL=https://api.dadata.ru/v2/suggest/party
 
 DOCKERHUB_USERNAME=denvill
 EOL
