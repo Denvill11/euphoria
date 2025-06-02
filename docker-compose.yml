@@ -2,9 +2,8 @@ version: '3.8'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${DOCKERHUB_USERNAME}/euphoria:latest
+    restart: always
     ports:
       - "3001:3001"
     depends_on:
@@ -22,11 +21,17 @@ services:
       - DB_DATABASE=${DB_DATABASE}
       - REDIS_HOST=redis
       - REDIS_PORT=6380
+      - EMAILER_USER=${EMAILER_USER}
+      - EMAILER_PASSWORD=${EMAILER_PASSWORD}
+      - REDIS_APPROVE_KEY=${REDIS_APPROVE_KEY}
+      - REDIS_TTL=${REDIS_TTL}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - SALT_ROUNDS=${SALT_ROUNDS}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
     volumes:
       - ./uploads:/app/uploads
     networks:
       - gastro-network
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/api/health"]
       interval: 30s
@@ -36,6 +41,7 @@ services:
 
   postgres:
     image: postgres:16-alpine
+    restart: always
     ports:
       - "5432:5432"
     environment:
@@ -56,8 +62,9 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: always
     ports:
-      - "6380:6379"
+      - "127.0.0.1:6380:6379"  # Only allow local connections
     volumes:
       - redis_data:/data
     networks:
