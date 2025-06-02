@@ -15,7 +15,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({ origin: '*' });
   const config = new DocumentBuilder()
-    .setTitle('Эйфория:v1:final')
+    .setTitle('Эйфория')
     .setDescription('API документация')
     .setVersion('1.0')
     .addTag('euphoria')
