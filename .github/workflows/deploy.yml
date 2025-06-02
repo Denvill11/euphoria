@@ -1,0 +1,66 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  DOCKER_IMAGE: denvill11/euphoria
+  DOCKER_TAG: latest
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            # Create directory if it doesn't exist
+            mkdir -p /opt/euphoria
+
+            # Create .env file
+            cat > /opt/euphoria/.env << 'EOL'
+            DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_DATABASE=${{ secrets.DB_DATABASE }}
+            EMAILER_USER=${{ secrets.EMAILER_USER }}
+            EMAILER_PASSWORD=${{ secrets.EMAILER_PASSWORD }}
+            REDIS_APPROVE_KEY=${{ secrets.REDIS_APPROVE_KEY }}
+            REDIS_TTL=${{ secrets.REDIS_TTL }}
+            PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}
+            SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}
+            EOL
+
+            # Copy docker-compose file
+            echo "${{ secrets.DOCKER_COMPOSE_PROD }}" > /opt/euphoria/docker-compose.prod.yml
+
+            # Pull and restart containers
+            cd /opt/euphoria
+            docker-compose -f docker-compose.prod.yml pull
+            docker-compose -f docker-compose.prod.yml up -d 
