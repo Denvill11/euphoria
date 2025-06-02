@@ -51,7 +51,7 @@ describe('AuthGuard', () => {
     });
 
     it('should allow access for valid token', async () => {
-      const mockPayload = { id: 1 };
+      const mockPayload = { id: 1, pizdi: 'pizdi' };
 
       mockJwtService.verifyAsync.mockResolvedValue(mockPayload);
 

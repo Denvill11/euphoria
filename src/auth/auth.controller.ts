@@ -43,7 +43,7 @@ export class AuthController {
   }
 
   @Post('generate-verify-code')
-  generateVerifyCode(@Body() generateCodeData: GenerateVerifyCodeDTO) {
-    return this.authService.generateVerifyCode(generateCodeData)
+  async generateVerifyCode(@Body() generateCodeData: GenerateVerifyCodeDTO) {
+    return await this.authService.generateVerifyCode(generateCodeData);
   }
 }
