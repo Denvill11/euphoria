@@ -9,6 +9,7 @@ import { Op } from 'sequelize';
 import { Category } from 'sequelize/models/category';
 import { Flow } from 'sequelize/models/flows';
 import * as fs from 'fs/promises';
+import { User } from 'sequelize/models/user';
 
 @Injectable()
 export class TourService {
@@ -109,6 +110,8 @@ export class TourService {
       city?: string;
       durationFrom?: number;
       durationTo?: number;
+      isCreatedByMe?: boolean;
+      userId?: number | undefined;
     },
   ): Promise<Tour[]> {
     const offset = (page - 1) * limit;
@@ -140,6 +143,10 @@ export class TourService {
       where.city = {
         [Op.iLike]: `%${filters.city}%`,
       };
+    }
+
+    if (filters?.isCreatedByMe && filters?.userId) {
+      where.userId = filters.userId;
     }
 
     if (filters?.startDate || filters?.endDate) {
@@ -189,6 +196,11 @@ export class TourService {
             model: Category,
             as: 'categories',
             through: { attributes: [] },
+          },
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'name', 'surname', 'email', 'avatarPath'],
           },
         ],
       });
