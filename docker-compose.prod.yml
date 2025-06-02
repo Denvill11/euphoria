@@ -21,6 +21,12 @@ services:
       - DB_DATABASE=${DB_DATABASE}
       - REDIS_HOST=redis
       - REDIS_PORT=6380
+      - EMAILER_USER=${EMAILER_USER}
+      - EMAILER_PASSWORD=${EMAILER_PASSWORD}
+      - REDIS_APPROVE_KEY=${REDIS_APPROVE_KEY}
+      - REDDIS_TTL=${REDDIS_TTL}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - SALT_ROUNDS=${SALT_ROUNDS}
     volumes:
       - ./uploads:/app/uploads
     networks:
