@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   UseInterceptors,
   applyDecorators,
 } from '@nestjs/common';
