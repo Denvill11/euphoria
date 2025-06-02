@@ -18,7 +18,7 @@ import { Organizer } from 'src/helpers/guards/organizer.guard';
 import { User, userTokenData } from 'src/helpers/decorators/user-decorator';
 import { AuthGuard } from 'src/helpers/guards/jwt-auth.guard';
 import { ImageUpload } from 'src/helpers/decorators/image-upload.decorator';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('tours')
 @Controller('tour')
@@ -28,6 +28,10 @@ export class TourController {
   @ApiBearerAuth()
   @Post()
   @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: CreateTourDTO,
+    description: 'Создание нового тура'
+  })
   @ImageUpload({ singleFile: false, fieldName: 'photos' })
   @UseGuards(Organizer, AuthGuard)
   createTour(
@@ -41,6 +45,10 @@ export class TourController {
   @ApiBearerAuth()
   @Patch('/:tourId')
   @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: CreateTourDTO,
+    description: 'Обновление существующего тура'
+  })
   @UseGuards(Organizer, AuthGuard)
   @ImageUpload({ singleFile: false, fieldName: 'photos' })
   updateTour(

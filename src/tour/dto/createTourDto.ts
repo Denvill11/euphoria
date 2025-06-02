@@ -13,17 +13,19 @@ import {
 } from 'class-validator';
 import { IsNotProfane } from 'src/helpers/pipes/isNotProfine';
 
-class FlowDTO {
+export class FlowDTO {
   @ApiProperty({
     description: 'Дата начала потока',
-    example: '2024-04-01T10:00:00.000Z'
+    example: '2024-04-01T10:00:00.000Z',
+    type: String
   })
   @IsDateString()
   startDate: Date;
 
   @ApiProperty({
     description: 'Дата окончания потока',
-    example: '2024-04-03T18:00:00.000Z'
+    example: '2024-04-03T18:00:00.000Z',
+    type: String
   })
   @IsDateString()
   endDate: Date;
@@ -31,16 +33,19 @@ class FlowDTO {
   @ApiProperty({
     description: 'Количество участников',
     example: 10,
-    minimum: 1
+    minimum: 1,
+    type: Number
   })
   @Type(() => Number)
+  @IsNumber()
   participant: number;
 
   @ApiProperty({ 
     required: false,
     description: 'Текущая цена',
     example: 5000,
-    minimum: 0
+    minimum: 0,
+    type: Number
   })
   @IsOptional()
   @IsNumber()
@@ -51,7 +56,8 @@ class FlowDTO {
 export class CreateTourDTO {
   @ApiProperty({
     description: 'Название тура',
-    example: 'Гастрономический тур по Италии'
+    example: 'Гастрономический тур по Италии',
+    type: String
   })
   @IsString()
   @IsNotEmpty()
@@ -60,7 +66,8 @@ export class CreateTourDTO {
 
   @ApiProperty({
     description: 'Описание тура',
-    example: 'Увлекательное путешествие по кухням Италии'
+    example: 'Увлекательное путешествие по кухням Италии',
+    type: String
   })
   @IsString()
   @IsNotEmpty()
@@ -69,14 +76,16 @@ export class CreateTourDTO {
 
   @ApiProperty({
     description: 'Включает ли тур проживание',
-    example: true
+    example: true,
+    type: Boolean
   })
   @Type(() => Boolean)
   isAccommodation: boolean;
 
   @ApiProperty({
     description: 'Адрес проведения тура',
-    example: 'Via Roma, 1, Milan, Italy'
+    example: 'Via Roma, 1, Milan, Italy',
+    type: String
   })
   @IsString()
   @IsNotEmpty()
@@ -86,7 +95,8 @@ export class CreateTourDTO {
   @ApiProperty({
     description: 'Продолжительность тура в днях',
     example: 7,
-    minimum: 1
+    minimum: 1,
+    type: Number
   })
   @Type(() => Number)
   @Min(1)
@@ -96,7 +106,8 @@ export class CreateTourDTO {
     description: 'Город проведения тура',
     example: 'Milan',
     minLength: 3,
-    maxLength: 25
+    maxLength: 25,
+    type: String
   })
   @Type(() => String)
   @Length(3, 25)
@@ -106,7 +117,8 @@ export class CreateTourDTO {
   @ApiPropertyOptional({
     type: [Number],
     description: 'ID категорий тура',
-    example: [1, 2, 3]
+    example: [1, 2, 3],
+    isArray: true
   })
   @IsArray()
   @IsOptional()
@@ -116,7 +128,8 @@ export class CreateTourDTO {
 
   @ApiProperty({
     type: [FlowDTO],
-    description: 'Потоки тура'
+    description: 'Потоки тура',
+    isArray: true
   })
   @IsArray()
   @ValidateNested({ each: true })
@@ -130,7 +143,7 @@ export class CreateTourDTO {
       format: 'binary'
     },
     description: 'Фотографии тура',
-    name: 'photos'
+    required: false
   })
   photos?: any[];
 }

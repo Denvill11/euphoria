@@ -82,4 +82,4 @@ import { HealthController } from './health.controller';
   ],
   controllers: [HealthController],
 })
-export class AppModule { }
+export class AppModule {}
