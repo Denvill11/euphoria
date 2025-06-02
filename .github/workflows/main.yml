@@ -156,6 +156,20 @@ jobs:
           # Docker Configuration
           DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}
 
+          # Email Configuration
+          EMAILER_USER=${{ secrets.EMAILER_USER }}
+          EMAILER_PASSWORD=${{ secrets.EMAILER_PASSWORD }}
+
+          # Redis Configuration
+          REDIS_HOST=redis
+          REDIS_PORT=6380
+          REDIS_APPROVE_KEY=${{ secrets.REDIS_APPROVE_KEY }}
+          REDIS_TTL=${{ secrets.REDIS_TTL }}
+
+          # Security Configuration
+          PRIVATE_KEY=${{ secrets.PRIVATE_KEY }}
+          SALT_ROUNDS=${{ secrets.SALT_ROUNDS }}
+
           # File Upload Configuration
           UPLOAD_DESTINATION=./uploads
           EOL
