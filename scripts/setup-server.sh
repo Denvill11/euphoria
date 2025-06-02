@@ -63,6 +63,8 @@ SALT_ROUNDS=10
 UPLOAD_DESTINATION=./uploads
 DADATA_TOKEN=your-dadata-token
 DADATA_URL=https://api.dadata.ru/v2/suggest/party
+
+DOCKERHUB_USERNAME=denvill
 EOL
 
 # Set proper permissions
