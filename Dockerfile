@@ -28,13 +28,27 @@ RUN npm ci --only=production
 # Copy built application and scripts
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/sequelize ./sequelize
-COPY --from=builder /app/scripts/init.sh /app/init.sh
+
+# Create init script
+RUN echo '#!/bin/sh\n\
+\n\
+# Wait for database to be ready\n\
+echo "Waiting for database to be ready..."\n\
+while ! nc -z $DB_HOST $DB_PORT; do\n\
+  sleep 1\n\
+done\n\
+echo "Database is ready!"\n\
+\n\
+# Apply database migrations\n\
+echo "Applying database migrations..."\n\
+cd /app && npx sequelize-cli db:migrate --config sequelize/config.js --migrations-path sequelize/migrations\n\
+\n\
+# Start the application\n\
+echo "Starting the application..."\n\
+exec node /app/dist/src/main.js' > /app/init.sh
 
 # Make init script executable
 RUN chmod +x /app/init.sh
-
-# Verify dist directory contents
-RUN ls -la dist/src/
 
 # Create uploads directory
 RUN mkdir -p uploads
