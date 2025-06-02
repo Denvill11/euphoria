@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-# Copy source code
+# Copy source code and scripts
 COPY . .
 
 # Build the application
@@ -25,13 +25,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --only=production
 
-# Copy built application
+# Copy built application and scripts
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/sequelize ./sequelize
-COPY --from=builder /app/scripts/init.sh ./init.sh
+COPY --from=builder /app/scripts/init.sh /app/init.sh
 
 # Make init script executable
-RUN chmod +x ./init.sh
+RUN chmod +x /app/init.sh
 
 # Verify dist directory contents
 RUN ls -la dist/src/
@@ -59,4 +59,4 @@ UPLOAD_DESTINATION=./uploads" > .env
 
 EXPOSE 3001
 
-CMD ["./init.sh"] 
+CMD ["/app/init.sh"] 

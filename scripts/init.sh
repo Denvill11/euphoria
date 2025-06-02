@@ -13,4 +13,4 @@ cd /app && npx sequelize-cli db:migrate --config sequelize/config.js --migration
 
 # Start the application
 echo "Starting the application..."
-node dist/main 
+node /app/dist/src/main.js 
