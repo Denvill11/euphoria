@@ -51,6 +51,7 @@ export class TourController {
 
   @Get()
   async getAllTours(
+    @User() user: userTokenData | undefined,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @Query('title') title?: string,
@@ -61,6 +62,7 @@ export class TourController {
     @Query('city') city?: string,
     @Query('durationFrom') durationFrom?: number,
     @Query('durationTo') durationTo?: number,
+    @Query('isCreatedByMe') isCreatedByMe?: boolean,
   ) {
     const parsedCategoryIds = categoryIds
       ? categoryIds.split(',').map((id) => parseInt(id, 10))
@@ -78,6 +80,8 @@ export class TourController {
       city: city,
       durationFrom,
       durationTo,
+      isCreatedByMe,
+      userId: user?.id,
     });
   }
 
