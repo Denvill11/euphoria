@@ -72,5 +72,5 @@ UPLOAD_DESTINATION=./uploads" > .env
 
 EXPOSE 3001
 
-# Use shell form to ensure proper script execution
-CMD /bin/sh /app/init.sh 
+# Use exec form for better signal handling
+CMD ["/bin/sh", "/app/init.sh"] 
