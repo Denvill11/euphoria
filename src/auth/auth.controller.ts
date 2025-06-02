@@ -3,19 +3,19 @@ import {
   Controller,
   Get,
   Post,
-  Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { RegisterUserDTO } from './dto/registerUserDTO';
 import { LoginUserDTO } from './dto/loginUserDTO';
-import { whoamiType } from './dto/whoamiDTO';
 import { AuthGuard } from '../helpers/guards/jwt-auth.guard';
 import { VerifyEmailDTO } from './dto/verifyEmailDTO';
 import { GenerateVerifyCodeDTO } from './dto/generateVerifyCodeDTO';
+import { User, userTokenData } from '../helpers/decorators/user-decorator';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -33,8 +33,8 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get('/whoami')
-  getUserInfo(@Request() req: whoamiType) {
-    return this.authService.getUserInfo(req.user.id);
+  getUserInfo(@User() user: userTokenData) {
+    return this.authService.getUserInfo(user.id);
   }
 
   @Post('verify-email')

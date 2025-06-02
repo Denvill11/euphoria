@@ -14,10 +14,22 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({ origin: '*' });
+  
   const config = new DocumentBuilder()
     .setTitle('Эйфория-v1')
     .setDescription('API документация')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth', // This name here is important for matching @ApiBearerAuth() in your controllers
+    )
     .addTag('euphoria')
     .build();
 

@@ -28,10 +28,16 @@ export class AuthService {
   ) {}
 
   async getUserInfo(userId: number) {
-    return await this.userData.findOne({
+    const user = await this.userData.findOne({
       where: { id: userId },
-      attributes: ['id', 'avatarPath', 'email', 'name', 'surname', 'role', 'patronymic'],
+      attributes: ['id', 'avatarPath', 'email', 'name', 'surname', 'role', 'patronymic', 'isEmailVerified'],
     });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return user;
   }
 
   private generateToken(id: number, userRole: UserRole) {

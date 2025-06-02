@@ -42,10 +42,4 @@ export class RegisterUserDTO {
   @IsString()
   @Transform(({ value }) => value.trim())
   patronymic?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  @Transform(({ value }) => value.trim())
-  avatarPath?: string;
 }
