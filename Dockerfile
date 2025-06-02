@@ -48,7 +48,13 @@ JWT_EXPIRATION=24h\n\
 ENCRYPTION_KEY=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef\n\
 DADATA_TOKEN=your-dadata-token\n\
 DADATA_URL=https://api.dadata.ru/v2/suggest/party\n\
-UPLOAD_DESTINATION=./uploads" > .env
+UPLOAD_DESTINATION=./uploads\n\
+EMAILER_USER=euphoria-mail@mail.ru\n\
+EMAILER_PASSWORD=2ms8kwgGjQ1fqvvijZbN\n\
+REDIS_APPROVE_KEY=b4eb30ba-9c11-436d-82d1-d6b7107d0091\n\
+REDDIS_TTL=12000\n\
+PRIVATE_KEY=secret\n\
+SALT_ROUNDS=10" > .env
 
 EXPOSE 3000
 
