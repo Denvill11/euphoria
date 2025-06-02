@@ -12,8 +12,8 @@ export class CreateCategoryDTO {
   @IsNotEmpty()
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
   @IsString()
   @IsOptional()
-  iconPath: string;
+  iconPath?: string;
 }
