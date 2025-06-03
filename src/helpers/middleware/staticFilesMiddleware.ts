@@ -7,7 +7,6 @@ import * as express from 'express';
 export class StaticFilesMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const uploadsPath = path.join(__dirname, '../../..', 'uploads');
-    console.log('Serving static files from: ', uploadsPath);
 
     express.static(uploadsPath)(req, res, next);
   }

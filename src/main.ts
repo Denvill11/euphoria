@@ -24,17 +24,21 @@ async function bootstrap() {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
         in: 'header',
+        name: 'Authorization',
       },
-      'JWT-auth', // This name here is important for matching @ApiBearerAuth() in your controllers
     )
     .addTag('euphoria')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, document);
+  
+  SwaggerModule.setup('api-docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      security: [{ bearer: [] }]
+    }
+  });
 
   await app.listen(PORT, () => {
     console.log(`serverStarted on http://localhost:${PORT}`);

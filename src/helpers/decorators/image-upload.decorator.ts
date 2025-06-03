@@ -4,7 +4,7 @@ import {
   applyDecorators,
 } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiConsumes } from '@nestjs/swagger';
 
 import * as crypto from 'crypto';
 import * as fs from 'fs';
@@ -48,30 +48,6 @@ export function ImageUpload(options: ImageUploadOptions = {}) {
 
   const fileUploadDecorators = [
     ApiConsumes('multipart/form-data'),
-    ApiBody({
-      schema: {
-        type: 'object',
-        properties: {
-          title: { type: 'string', description: 'Title' },
-          description: { type: 'string', description: 'Description' },
-          [fieldName]: singleFile
-            ? {
-                type: 'string',
-                format: 'binary',
-                description: 'File to upload',
-              }
-            : {
-                type: 'array',
-                items: {
-                  type: 'string',
-                  format: 'binary',
-                },
-                description: `Files to upload (max ${maxCount})`,
-              },
-        },
-        required: ['title', 'description'],
-      },
-    }),
   ];
 
   const interceptor = singleFile
