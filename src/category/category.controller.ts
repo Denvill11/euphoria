@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { Admin } from 'src/helpers/guards/admin.guard';
 import { ImageUpload } from 'src/helpers/decorators/image-upload.decorator';
 import { CreateCategoryDTO } from './dto/createCategoryDTO';
@@ -34,8 +34,9 @@ export class CategoryController {
 
   @ApiBearerAuth()
   @UseGuards(Admin)
-  @ImageUpload({ singleFile: true, fieldName: 'category' })
   @Post()
+  @ApiConsumes('multipart/form-data')
+  @ImageUpload({ singleFile: true, fieldName: 'category' })
   async createCategory(
     @Body() createCategoryDto: CreateCategoryDTO,
     @UploadedFile() file: Express.Multer.File,
@@ -44,9 +45,10 @@ export class CategoryController {
   }
 
   @ApiBearerAuth()
-  @ImageUpload({ singleFile: true, fieldName: 'category' })
-  @Patch(':id')
   @UseGuards(Admin)
+  @Patch(':id')
+  @ApiConsumes('multipart/form-data')
+  @ImageUpload({ singleFile: true, fieldName: 'category' })
   async updateCategory(
     @Param('id') id: number,
     @Body() updateCategoryDto: UpdateCategoryDTO,

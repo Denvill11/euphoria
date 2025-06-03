@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsEmail,
@@ -9,33 +9,42 @@ import {
 import { Transform } from 'class-transformer';
 
 export class UpdatePersonalInfoDTO {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: 'Email пользователя' })
   @IsOptional()
-  @IsEmail()
+  @IsEmail(undefined, { message: 'Некорректный формат email' })
   @IsString()
-  @Transform(({ value }) => value.trim())
+  @Transform(({ value }) => {
+    if (!value) return undefined;
+    return value.trim();
+  })
   email?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: 'Имя пользователя' })
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value.trim())
   name?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: 'Фамилия пользователя' })
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value.trim())
   surname?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ description: 'Отчество пользователя' })
   @IsOptional()
   @IsString()
   @Transform(({ value }) => value.trim())
   patronymic?: string;
 
+  @ApiPropertyOptional({
+    type: 'string',
+    format: 'binary',
+    description: 'Файл аватара пользователя',
+    name: 'avatar',
+  })
   @IsOptional()
   @IsString()
-  @Transform(({ value }) => value.trim())
+  @Transform(({ value }) => value.trim().replace(/^['"]|['"]$/g, ''))
   avatarPath?: string;
 }
