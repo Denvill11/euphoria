@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FoodCategoryController } from '../food-category.controller';
 import { FoodCategoryService } from '../food-category.service';
+import { JwtService } from '@nestjs/jwt';
 
 describe('FoodCategoryController', () => {
   let controller: FoodCategoryController;
@@ -10,6 +11,11 @@ describe('FoodCategoryController', () => {
     getFoodCategories: jest.fn(),
   };
 
+  const mockJwtService = {
+    sign: jest.fn(),
+    verify: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FoodCategoryController],
@@ -17,6 +23,10 @@ describe('FoodCategoryController', () => {
         {
           provide: FoodCategoryService,
           useValue: mockFoodCategoryService,
+        },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
         },
       ],
     }).compile();
@@ -30,73 +40,27 @@ describe('FoodCategoryController', () => {
   });
 
   describe('getFoodCategories', () => {
-    it('should return food categories with default pagination', async () => {
-      const expectedResult = {
-        data: [
-          {
-            id: 1,
-            name: 'Italian',
-          },
-          {
-            id: 2,
-            name: 'Japanese',
-          },
-        ],
-        total: 2,
-        limit: 10,
-        offset: 0,
-      };
+    it('should get food categories with default parameters', async () => {
+      const mockCategories = [{ id: 1, name: 'Test Category' }];
+      mockFoodCategoryService.getFoodCategories.mockResolvedValue(mockCategories);
 
-      mockFoodCategoryService.getFoodCategories.mockResolvedValue(
-        expectedResult,
-      );
+      const result = await controller.getFoodCategories('', 10, 0);
 
-      const result = await controller.getFoodCategories({
-        search: '',
-        limit: 10,
-        offset: 0,
-      });
-
-      expect(result).toEqual(expectedResult);
-      expect(service.getFoodCategories).toHaveBeenCalledWith({
-        search: '',
-        limit: 10,
-        offset: 0,
-      });
+      expect(result).toEqual(mockCategories);
+      expect(service.getFoodCategories).toHaveBeenCalledWith({ search: '', limit: 10, offset: 0 });
     });
 
-    it('should return food categories with search and pagination', async () => {
-      const search = 'ital';
+    it('should get food categories with search parameters', async () => {
+      const search = 'test';
       const limit = 5;
-      const offset = 0;
-      const expectedResult = {
-        data: [
-          {
-            id: 1,
-            name: 'Italian',
-          },
-        ],
-        total: 1,
-        limit,
-        offset,
-      };
+      const offset = 5;
+      const mockCategories = [{ id: 1, name: 'Test Category' }];
+      mockFoodCategoryService.getFoodCategories.mockResolvedValue(mockCategories);
 
-      mockFoodCategoryService.getFoodCategories.mockResolvedValue(
-        expectedResult,
-      );
+      const result = await controller.getFoodCategories(search, limit, offset);
 
-      const result = await controller.getFoodCategories({
-        search,
-        limit,
-        offset,
-      });
-
-      expect(result).toEqual(expectedResult);
-      expect(service.getFoodCategories).toHaveBeenCalledWith({
-        search,
-        limit,
-        offset,
-      });
+      expect(result).toEqual(mockCategories);
+      expect(service.getFoodCategories).toHaveBeenCalledWith({ search, limit, offset });
     });
   });
 });

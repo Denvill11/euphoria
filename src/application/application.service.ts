@@ -127,9 +127,21 @@ export class ApplicationService extends HttpRequestService {
 
     if (user.role !== UserRole.ADMIN) {
       where.userId = user.id;
+      return await this.applicationData.findAll({
+        where,
+        include: [
+          {
+            model: User,
+            attributes: ['id', 'email', 'firstName', 'lastName', 'role'],
+          },
+        ],
+        order: [['createdAt', 'DESC']],
+      });
     }
 
-    return await this.applicationData.findAll({ where });
+    return await this.applicationData.findAll({
+      where: Object.keys(where).length > 0 ? where : undefined
+    });
   }
 
   async updateApplicationStatus(
@@ -143,16 +155,15 @@ export class ApplicationService extends HttpRequestService {
     }
 
     const userId = application.dataValues.userId;
-    const user = await this.userRepo.findByPk(userId);
 
-    if (user?.role === UserRole.USER) {
+    if (status === ApplicationStatus.APPROVED) {
       await this.userRepo.update(
         { role: UserRole.ORGANIZER },
-        { where: { id: userId } },
+        { where: { id: userId } }
       );
     }
 
-    application.adminApprove = status;
+    application.dataValues.adminApprove = status;
     await application.save();
 
     return application;

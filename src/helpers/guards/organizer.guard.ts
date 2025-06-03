@@ -20,9 +20,8 @@ export class Organizer implements CanActivate {
     }
 
     const decoded: any = this.jwtService.decode(token);
-
     const roles = [UserRole.ADMIN, UserRole.ORGANIZER];
-    if (!roles.includes(decoded.userRole)) {
+    if (!roles.includes(decoded.userRole || decoded.role)) {
       throw new ForbiddenException('You do not have the necessary role');
     }
 

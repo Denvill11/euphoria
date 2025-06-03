@@ -96,16 +96,23 @@ export class CreateTourDTO {
   })
   @IsArray()
   @IsOptional()
-  @IsNumber({}, { each: true })
-  @Type(() => Number)
   @Transform(({ value }) => {
-    if (typeof value === 'number') return [value];
+
     if (typeof value === 'string') {
-      const num = Number(value);
-      return Number.isNaN(num) ? value : [num];
+      return value.split(',').map(item => Number(item.trim())).filter(num => !isNaN(num));
     }
-    return value;
+
+    if (Array.isArray(value)) {
+      return value.map(item => Number(item)).filter(num => !isNaN(num));
+    }
+
+    if (value !== undefined && value !== '') {
+      const num = Number(value);
+      return Number.isNaN(num) ? [] : [num];
+    }
+    return [];
   })
+  @IsNumber({}, { each: true })
   categoryIds: number[];
 
   @ApiProperty({

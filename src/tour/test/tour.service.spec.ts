@@ -24,6 +24,7 @@ describe('TourService', () => {
           useValue: {
             findAll: jest.fn(),
             findByPk: jest.fn(),
+            findAndCountAll: jest.fn(),
           },
         },
         {
@@ -46,19 +47,25 @@ describe('TourService', () => {
 
   describe('getAllTours', () => {
     it('should return tours with default pagination', async () => {
-      const mockTours = [
-        {
-          id: 1,
-          title: 'Test Tour',
-          description: 'Test Description',
-        },
-      ];
-      tourModel.findAll.mockResolvedValue(mockTours);
+      const mockTours = {
+        items: [
+          {
+            id: 1,
+            title: 'Test Tour',
+            description: 'Test Description',
+          },
+        ],
+        total: 1
+      };
+      tourModel.findAndCountAll.mockResolvedValue({
+        rows: mockTours.items,
+        count: mockTours.total
+      });
 
       const result = await service.getAllTours();
 
       expect(result).toEqual(mockTours);
-      expect(tourModel.findAll).toHaveBeenCalled();
+      expect(tourModel.findAndCountAll).toHaveBeenCalled();
     });
   });
 

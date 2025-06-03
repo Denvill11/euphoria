@@ -5,7 +5,7 @@ import { CreateTourDTO } from './dto/createTourDto';
 import { Errors } from 'src/helpers/constants/errorMessages';
 import { userTokenData } from 'src/helpers/decorators/user-decorator';
 import { UserRole } from 'sequelize/models/user';
-import { Op } from 'sequelize';
+import { FindAndCountOptions, Op, WhereOptions } from 'sequelize';
 import { Category } from 'sequelize/models/category';
 import { Flow } from 'sequelize/models/flows';
 import * as fs from 'fs/promises';
@@ -126,9 +126,9 @@ export class TourService {
   }
 
   async getAllTours(
-    page: number = 1,
-    limit: number = 10,
-    filters?: {
+    page = 1,
+    limit = 10,
+    filters: {
       title?: string;
       isAccommodation?: boolean;
       categoryIds?: number[];
@@ -139,117 +139,70 @@ export class TourService {
       durationFrom?: number;
       durationTo?: number;
       isCreatedByMe?: boolean;
-      userId?: number | undefined;
-    },
-  ): Promise<Tour[]> {
-    const offset = (page - 1) * limit;
+      userId?: number;
+    } = {}
+  ): Promise<{ items: Tour[]; total: number }> {
+    try {
+      const offset = (page - 1) * limit;
+      const where: WhereOptions<Tour> = {};
 
-    const where: any = {};
+      if (filters.title?.trim()) {
+        where.title = { [Op.iLike]: `%${filters.title.trim()}%` };
+      }
 
-    if (filters?.title) {
-      where.title = { [Op.like]: `%${filters.title}%` };
-    }
+      if (typeof filters.isAccommodation === 'boolean') {
+        where.isAccommodation = filters.isAccommodation;
+      }
 
-    if (
-      filters?.durationFrom !== undefined ||
-      filters?.durationTo !== undefined
-    ) {
-      where.duration = {};
-      if (filters.durationFrom !== undefined) {
+      if (filters.city?.trim()) {
+        where.city = { [Op.iLike]: `%${filters.city.trim()}%` };
+      }
+
+      if (filters.isCreatedByMe && filters.userId) {
+        where.authorId = filters.userId;
+      }
+
+      if (typeof filters.durationFrom === 'number') {
+        if (!where.duration) {
+          where.duration = {};
+        }
         where.duration[Op.gte] = filters.durationFrom;
       }
-      if (filters.durationTo !== undefined) {
+
+      if (typeof filters.durationTo === 'number') {
+        if (!where.duration) {
+          where.duration = {};
+        }
         where.duration[Op.lte] = filters.durationTo;
       }
-    }
 
-    if (filters?.isAccommodation !== undefined) {
-      where.isAccommodation = filters.isAccommodation;
-    }
-
-    if (filters?.city) {
-      where.city = {
-        [Op.iLike]: `%${filters.city}%`,
-      };
-    }
-
-    if (filters?.isCreatedByMe && filters?.userId) {
-      where.userId = filters.userId;
-    }
-
-    if (filters?.startDate || filters?.endDate) {
-      where['$flows.startDate$'] = {};
-      where['$flows.endDate$'] = {};
-
-      if (filters.startDate) {
-        where['$flows.startDate$'][Op.gte] = filters.startDate;
-      }
-
-      if (filters.endDate) {
-        where['$flows.endDate$'][Op.lte] = filters.endDate;
-      }
-    }
-
-    try {
-      const include: any = [];
-
-      if (filters?.categoryIds?.length) {
-        include.push({
-          model: Category,
-          where: { id: filters.categoryIds },
-          through: { attributes: [] },
-          required: true,
-        });
-      }
-
-      if (filters?.foodCategoryIds?.length) {
-        include.push({
-          model: FoodCategory,
-          where: { id: filters.foodCategoryIds },
-          through: { attributes: [] },
-          required: true,
-        });
-      }
-
-      if (filters?.startDate || filters?.endDate) {
-        include.push({
-          model: Flow,
-          where: {},
-          required: true,
-        });
-      }
-
-      const tours = await this.tourRepo.findAll({
+      const queryOptions: FindAndCountOptions<Tour> = {
         where,
         limit,
         offset,
+        distinct: true,
         order: [['createdAt', 'DESC']],
         include: [
           {
-            model: Flow,
-            as: 'flows',
-          },
-          {
-            model: Category,
-            as: 'categories',
-            through: { attributes: [] },
-          },
-          {
-            model: FoodCategory,
-            as: 'foodCategories',
-            through: { attributes: [] },
-          },
-          {
             model: User,
-            as: 'user',
-            attributes: ['id', 'name', 'surname', 'email', 'avatarPath'],
-          },
-        ],
-      });
+            as: 'author',
+            attributes: ['id', 'name', 'surname'],
+          }
+        ]
+      };
 
-      return tours;
+      const { rows, count } = await this.tourRepo.findAndCountAll(queryOptions);
+
+      return {
+        items: rows,
+        total: count
+      };
     } catch (error) {
-      throw new HttpException(Errors.getTours, HttpStatus.BAD_REQUEST);
+      console.error('Error in getAllTours:', error);
+      throw new HttpException(
+        `${Errors.getTours}: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
