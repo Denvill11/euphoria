@@ -27,6 +27,7 @@ services:
       - REDIS_TTL=${REDIS_TTL}
       - PRIVATE_KEY=${PRIVATE_KEY}
       - SALT_ROUNDS=${SALT_ROUNDS}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
     volumes:
       - ./uploads:/app/uploads
     networks:
