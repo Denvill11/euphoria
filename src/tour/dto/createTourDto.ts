@@ -12,41 +12,22 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { IsNotProfane } from 'src/helpers/pipes/isNotProfine';
+import { Transform } from 'class-transformer';
 
-export class FlowDTO {
-  @ApiProperty({
-    description: 'Дата начала потока',
-    example: '2024-04-01T10:00:00.000Z',
-    type: String
-  })
+class FlowDTO {
+  @ApiProperty()
   @IsDateString()
   startDate: Date;
 
-  @ApiProperty({
-    description: 'Дата окончания потока',
-    example: '2024-04-03T18:00:00.000Z',
-    type: String
-  })
+  @ApiProperty()
   @IsDateString()
   endDate: Date;
 
-  @ApiProperty({
-    description: 'Количество участников',
-    example: 10,
-    minimum: 1,
-    type: Number
-  })
+  @ApiProperty()
   @Type(() => Number)
-  @IsNumber()
   participant: number;
 
-  @ApiProperty({ 
-    required: false,
-    description: 'Текущая цена',
-    example: 5000,
-    minimum: 0,
-    type: Number
-  })
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
@@ -56,8 +37,7 @@ export class FlowDTO {
 export class CreateTourDTO {
   @ApiProperty({
     description: 'Название тура',
-    example: 'Гастрономический тур по Италии',
-    type: String
+    example: 'Гастрономический тур по Италии'
   })
   @IsString()
   @IsNotEmpty()
@@ -66,8 +46,7 @@ export class CreateTourDTO {
 
   @ApiProperty({
     description: 'Описание тура',
-    example: 'Увлекательное путешествие по кухням Италии',
-    type: String
+    example: 'Увлекательное путешествие по кухням Италии'
   })
   @IsString()
   @IsNotEmpty()
@@ -76,16 +55,14 @@ export class CreateTourDTO {
 
   @ApiProperty({
     description: 'Включает ли тур проживание',
-    example: true,
-    type: Boolean
+    example: true
   })
   @Type(() => Boolean)
   isAccommodation: boolean;
 
   @ApiProperty({
     description: 'Адрес проведения тура',
-    example: 'Via Roma, 1, Milan, Italy',
-    type: String
+    example: 'Via Roma, 1, Milan, Italy'
   })
   @IsString()
   @IsNotEmpty()
@@ -95,8 +72,7 @@ export class CreateTourDTO {
   @ApiProperty({
     description: 'Продолжительность тура в днях',
     example: 7,
-    minimum: 1,
-    type: Number
+    minimum: 1
   })
   @Type(() => Number)
   @Min(1)
@@ -106,8 +82,7 @@ export class CreateTourDTO {
     description: 'Город проведения тура',
     example: 'Milan',
     minLength: 3,
-    maxLength: 25,
-    type: String
+    maxLength: 25
   })
   @Type(() => String)
   @Length(3, 25)
@@ -117,33 +92,73 @@ export class CreateTourDTO {
   @ApiPropertyOptional({
     type: [Number],
     description: 'ID категорий тура',
-    example: [1, 2, 3],
-    isArray: true
+    example: [1, 2, 3]
   })
   @IsArray()
   @IsOptional()
   @IsNumber({}, { each: true })
   @Type(() => Number)
+  @Transform(({ value }) => {
+    if (typeof value === 'number') return [value];
+    if (typeof value === 'string') {
+      const num = Number(value);
+      return Number.isNaN(num) ? value : [num];
+    }
+    return value;
+  })
   categoryIds: number[];
 
   @ApiProperty({
     type: [FlowDTO],
-    description: 'Потоки тура',
-    isArray: true
+    description: 'Потоки тура'
+  })
+  @Transform(({ value }) => {
+    
+    // Для multipart/form-data все приходит как строка
+    if (typeof value === 'string') {
+      try {
+        // Пробуем распарсить JSON строку
+        const parsed = JSON.parse(value);
+        
+        // Преобразуем данные в правильный формат
+        const transformFlow = (flow) => {
+          const result = {
+            startDate: new Date(flow.startDate),
+            endDate: new Date(flow.endDate),
+            participant: Number(flow.participant),
+            currentPrice: flow.currentPrice ? Number(flow.currentPrice) : undefined
+          };
+          return result;
+        };
+        
+        if (Array.isArray(parsed)) {
+          const result = parsed.map(transformFlow);
+          return result;
+        }
+        if (typeof parsed === 'object' && parsed !== null) {
+          const result = [transformFlow(parsed)];
+          return result;
+        }
+      } catch (e) {
+        console.error('Error parsing flows:', e);
+        return [];
+      }
+    }
+    return [];
   })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => FlowDTO)
   flows: FlowDTO[];
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     type: 'array',
     items: {
-      type: 'string',
+      type: 'file',
       format: 'binary'
     },
-    description: 'Фотографии тура',
+    description: 'Фотографии тура (максимум 10 файлов, формат: jpg, png)',
     required: false
   })
-  photos?: any[];
+  photos?: Express.Multer.File[];
 }

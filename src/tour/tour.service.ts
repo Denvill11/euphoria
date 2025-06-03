@@ -23,15 +23,29 @@ export class TourService {
     tourData: CreateTourDTO,
     photos: Express.Multer.File[],
   ): Promise<Tour> {
-    const pathsFileNames = photos.map((el) => el.path);
+    const pathsFileNames = photos?.map((el) => el.path) ?? [];
 
     if (!pathsFileNames.length) {
       throw new HttpException(Errors.needImage, HttpStatus.BAD_REQUEST);
     }
 
-    const { categoryIds, flows, ...tourFields } = tourData;
+    const { categoryIds, flows: rawFlows, ...tourFields } = tourData;
 
     try {
+      let flows: any[] = [];
+      if (typeof rawFlows === 'string') {
+        try {
+          const parsed = JSON.parse(rawFlows);
+          flows = Array.isArray(parsed) ? parsed : [parsed];
+        } catch (e) {
+          console.error('Error parsing flows:', e);
+        }
+      } else if (Array.isArray(rawFlows)) {
+        flows = rawFlows;
+      } else if (rawFlows && typeof rawFlows === 'object') {
+        flows = [rawFlows];
+      }
+
       const tour = await this.tourRepo
         .build({
           ...tourFields,
@@ -46,21 +60,32 @@ export class TourService {
 
       if (flows?.length) {
         for (const flow of flows) {
-          await this.flowRepo.create({
-            ...flow,
-            tourId: tour.id,
-          } as Flow);
+          const flowData = {
+            startDate: new Date(flow.startDate),
+            endDate: new Date(flow.endDate),
+            participant: Number(flow.participant),
+            currentPrice: flow.currentPrice ? Number(flow.currentPrice) : undefined,
+            tourId: tour.id
+          };
+          
+          await this.flowRepo.create(flowData as any);
         }
       }
 
       return tour;
     } catch (error) {
+      console.error('Error creating tour:', error);
       try {
         for (const file of pathsFileNames) {
           await fs.unlink(file);
         }
-      } catch {}
-      throw new HttpException(Errors.createTour, HttpStatus.BAD_REQUEST);
+      } catch (unlinkError) {
+        console.error('Error deleting files:', unlinkError);
+      }
+      throw new HttpException(
+        `Error creating tour: ${error.message || Errors.createTour}`,
+        HttpStatus.BAD_REQUEST
+      );
     }
   }
 
@@ -207,7 +232,6 @@ export class TourService {
 
       return tours;
     } catch (error) {
-      console.log(error);
       throw new HttpException(Errors.getTours, HttpStatus.BAD_REQUEST);
     }
   }

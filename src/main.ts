@@ -14,6 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({ origin: '*' });
+  
   const config = new DocumentBuilder()
     .setTitle('Эйфория-v1')
     .setDescription('API документация')
@@ -24,14 +25,20 @@ async function bootstrap() {
         scheme: 'bearer',
         bearerFormat: 'JWT',
         in: 'header',
+        name: 'Authorization',
       },
-      'bearer'
     )
     .addTag('euphoria')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, document);
+  
+  SwaggerModule.setup('api-docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      security: [{ bearer: [] }]
+    }
+  });
 
   await app.listen(PORT, () => {
     console.log(`serverStarted on http://localhost:${PORT}`);
