@@ -40,15 +40,47 @@ export class AuthService {
     return user;
   }
 
-  private generateToken(id: number, userRole: UserRole) {
-    return this.jwtService.signAsync({ id, userRole });
+  private async generateTokens(id: number, userRole: UserRole) {
+    const token = await this.jwtService.signAsync(
+      { id, userRole },
+      { expiresIn: process.env.JWT_EXPIRATION }
+    );
+
+    const refreshToken = await this.jwtService.signAsync(
+      { id, userRole },
+      { expiresIn: process.env.JWT_REFRESH_EXPIRATION }
+    );
+
+    await this.cacheManager.set(
+      `access_token:${token}`,
+      refreshToken,
+      Number(process.env.JWT_REFRESH_TTL)
+    );
+
+    return token;
+  }
+
+  async refreshTokens(accessToken: string) {
+    try {
+      const refreshToken = await this.cacheManager.get(`access_token:${accessToken}`);
+      if (!refreshToken) {
+        throw new UnauthorizedException('Invalid access token');
+      }
+      const payload = await this.jwtService.verifyAsync(refreshToken as string, {
+        secret: process.env.PRIVATE_KEY
+      });
+      await this.cacheManager.del(`access_token:${accessToken}`);
+      return await this.generateTokens(payload.id, payload.userRole);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 
   async loginUser(userDto: LoginUserDTO) {
     const user = await this.validateUser(userDto);
-
     user.dataValues.password = '';
-    const token = await this.generateToken(user.id, user.dataValues.role);
+    
+    const token = await this.generateTokens(user.id, user.dataValues.role);
     return { token, user };
   }
 
@@ -65,10 +97,7 @@ export class AuthService {
     } as User);
 
     user.dataValues.password = '';
-    const token = await this.generateToken(
-      user.dataValues.id,
-      user.dataValues.role,
-    );
+    const token = await this.generateTokens(user.dataValues.id, user.dataValues.role);
     return { user, token };
   }
 
@@ -134,5 +163,9 @@ export class AuthService {
     );
 
     return;
+  }
+
+  async logout(accessToken: string) {
+    await this.cacheManager.del(`access_token:${accessToken}`);
   }
 }

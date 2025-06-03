@@ -10,6 +10,8 @@ import { Category } from 'sequelize/models/category';
 import { Flow } from 'sequelize/models/flows';
 import * as fs from 'fs/promises';
 import { User } from 'sequelize/models/user';
+import { FoodCategory } from 'sequelize/models/food_categories';
+import { AddFoodCategoriesDto } from './dto/addFoodCategoriesDto';
 
 @Injectable()
 export class TourService {
@@ -130,6 +132,7 @@ export class TourService {
       title?: string;
       isAccommodation?: boolean;
       categoryIds?: number[];
+      foodCategoryIds?: number[];
       startDate?: Date;
       endDate?: Date;
       city?: string;
@@ -199,6 +202,15 @@ export class TourService {
         });
       }
 
+      if (filters?.foodCategoryIds?.length) {
+        include.push({
+          model: FoodCategory,
+          where: { id: filters.foodCategoryIds },
+          through: { attributes: [] },
+          required: true,
+        });
+      }
+
       if (filters?.startDate || filters?.endDate) {
         include.push({
           model: Flow,
@@ -220,6 +232,11 @@ export class TourService {
           {
             model: Category,
             as: 'categories',
+            through: { attributes: [] },
+          },
+          {
+            model: FoodCategory,
+            as: 'foodCategories',
             through: { attributes: [] },
           },
           {
@@ -258,6 +275,68 @@ export class TourService {
 
     if (!isAuthor && !isAdmin) {
       throw new HttpException(Errors.forbidden, HttpStatus.FORBIDDEN);
+    }
+  }
+
+  async addFoodCategories(
+    user: userTokenData,
+    tourId: number,
+    addFoodCategoriesDto: AddFoodCategoriesDto,
+  ): Promise<Tour> {
+    const tour = await this.tourRepo.findByPk(tourId);
+
+    if (!tour) {
+      throw new HttpException(Errors.tourNotFound, HttpStatus.NOT_FOUND);
+    }
+
+    this.checkAcess(tour, user);
+
+    try {
+      await tour.$add('foodCategories', addFoodCategoriesDto.foodCategoryIds);
+      return tour.reload({
+        include: [
+          {
+            model: FoodCategory,
+            through: { attributes: [] },
+          },
+        ],
+      });
+    } catch (error) {
+      throw new HttpException(
+        Errors.addFoodCategoryError,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async removeFoodCategories(
+    user: userTokenData,
+    tourId: number,
+    addFoodCategoriesDto: AddFoodCategoriesDto,
+  ): Promise<Tour> {
+    const tour = await this.tourRepo.findByPk(tourId);
+
+    if (!tour) {
+      throw new HttpException(Errors.tourNotFound, HttpStatus.NOT_FOUND);
+    }
+
+    this.checkAcess(tour, user);
+
+    try {
+      await tour.$remove('foodCategories', addFoodCategoriesDto.foodCategoryIds);
+      return tour.reload({
+        include: [
+          {
+            model: FoodCategory,
+            through: { attributes: [] },
+          },
+        ],
+      });
+    } catch (error) {
+      throw new HttpException(
+        Errors.removeFoodCategoryError,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }

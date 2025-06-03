@@ -114,13 +114,10 @@ export class CreateTourDTO {
   })
   @Transform(({ value }) => {
     
-    // Для multipart/form-data все приходит как строка
     if (typeof value === 'string') {
       try {
-        // Пробуем распарсить JSON строку
         const parsed = JSON.parse(value);
         
-        // Преобразуем данные в правильный формат
         const transformFlow = (flow) => {
           const result = {
             startDate: new Date(flow.startDate),

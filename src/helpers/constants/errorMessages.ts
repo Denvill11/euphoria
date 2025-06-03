@@ -22,4 +22,7 @@ export const Errors = {
   notFounApplication: 'Not found application',
   wrongCode: 'Verification code is wrong',
   noPlaces: 'There are no places left',
+  foodCategoryNotFound: 'Food category not found',
+  addFoodCategoryError: 'Error adding food categories to tour',
+  removeFoodCategoryError: 'Error removing food categories from tour',
 };

@@ -103,7 +103,7 @@ describe('BookingService', () => {
 
       expect(result).toEqual(mockBooking);
       expect(mockFlow.save).toHaveBeenCalled();
-      expect(mockFlow.participant).toBe(3); // 5 - 2
+      expect(mockFlow.participant).toBe(3);
     });
   });
 
@@ -153,7 +153,7 @@ describe('BookingService', () => {
 
       await service.updateBooking(1, updateBookingDTO);
 
-      expect(mockFlow.participant).toBe(7); // 5 + 2 (original participant)
+      expect(mockFlow.participant).toBe(7);
       expect(mockFlow.save).toHaveBeenCalled();
       expect(mockActiveBooking.isActive).toBe(false);
       expect(mockActiveBooking.participant).toBe(3);

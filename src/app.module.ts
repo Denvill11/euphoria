@@ -26,6 +26,7 @@ import { FoodCategory } from 'sequelize/models/food_categories';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule } from '@nestjs/cache-manager';
 import { HealthController } from './health.controller';
+import { CronModule } from './helpers/cron/cron.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { HealthController } from './health.controller';
     BookingModule,
     MailerModule,
     FoodCategoryModule,
+    CronModule,
   ],
   controllers: [HealthController],
 })

@@ -145,6 +145,8 @@ jobs:
           # JWT Configuration
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           JWT_EXPIRATION=${{ secrets.JWT_EXPIRATION }}
+          JWT_REFRESH_EXPIRATION=${{ secrets.JWT_REFRESH_EXPIRATION }}
+          JWT_REFRESH_TTL=${{ secrets.JWT_REFRESH_TTL }}
 
           # Encryption Configuration
           ENCRYPTION_KEY=${{ secrets.ENCRYPTION_KEY }}

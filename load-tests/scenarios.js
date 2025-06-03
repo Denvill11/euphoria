@@ -33,7 +33,6 @@
 
   const BASE_URL = 'http://localhost:3001';
 
-  // Тестовые данные
   const TEST_USERS = new SharedArray('test users', function () {
     return [
       { email: 'test1@example.com', password: 'password123' },
