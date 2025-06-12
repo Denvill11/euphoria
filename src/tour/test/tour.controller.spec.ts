@@ -114,88 +114,76 @@ describe('TourController', () => {
 
   describe('getAllTours', () => {
     it('should return all tours with default pagination', async () => {
-      const expectedResult = [
-        {
-          id: 1,
-          title: 'Test Tour',
-          description: 'Test Description',
-          isAccommodation: true,
-          address: 'Test Address',
-          duration: 5,
-          city: 'Test City',
-        },
-      ];
+      const expectedResult = {
+        items: [
+          {
+            id: 1,
+            title: 'Test Tour',
+            description: 'Test Description',
+            isAccommodation: true,
+            address: 'Test Address',
+            duration: 5,
+            city: 'Test City',
+          },
+        ],
+        total: 1
+      };
+
+      const filterDto = {
+        page: 1,
+        limit: 10
+      };
 
       mockTourService.getAllTours.mockResolvedValue(expectedResult);
 
-      const result = await controller.getAllTours({} as userTokenData, 1, 10);
+      const result = await controller.getAllTours({} as userTokenData, filterDto);
 
       expect(result).toEqual(expectedResult);
-      expect(service.getAllTours).toHaveBeenCalledWith(1, 10, {
-        title: undefined,
-        isAccommodation: undefined,
-        categoryIds: undefined,
-        startDate: undefined,
-        endDate: undefined,
-        city: undefined,
-        durationFrom: undefined,
-        durationTo: undefined,
-        isCreatedByMe: undefined,
+      expect(service.getAllTours).toHaveBeenCalledWith(filterDto.page, filterDto.limit, {
+        ...filterDto,
         userId: undefined
       });
     });
 
     it('should return filtered tours', async () => {
-      const filters = {
+      const filterDto = {
         page: 2,
         limit: 5,
         title: 'Test',
         isAccommodation: true,
-        categoryIds: '1,2',
-        startDate: '2024-03-01',
-        endDate: '2024-03-31',
+        categoryIds: [1, 2],
+        foodCategoryIds: [3, 4],
+        startDate: new Date('2024-03-01'),
+        endDate: new Date('2024-03-31'),
         city: 'Test City',
         durationFrom: 3,
         durationTo: 7,
+        isCreatedByMe: true
       };
-      const expectedResult = [
-        {
-          id: 1,
-          title: 'Test Tour',
-          description: 'Test Description',
-          isAccommodation: true,
-          address: 'Test Address',
-          duration: 5,
-          city: 'Test City',
-        },
-      ];
+
+      const expectedResult = {
+        items: [
+          {
+            id: 1,
+            title: 'Test Tour',
+            description: 'Test Description',
+            isAccommodation: true,
+            address: 'Test Address',
+            duration: 5,
+            city: 'Test City',
+          },
+        ],
+        total: 1
+      };
 
       mockTourService.getAllTours.mockResolvedValue(expectedResult);
 
-      const result = await controller.getAllTours(
-        undefined,
-        filters.page,
-        filters.limit,
-        filters.title,
-        filters.isAccommodation,
-        filters.categoryIds,
-        filters.startDate,
-        filters.endDate,
-        filters.city,
-        filters.durationFrom,
-        filters.durationTo,
-      );
+      const result = await controller.getAllTours({} as userTokenData, filterDto);
 
       expect(result).toEqual(expectedResult);
-      expect(service.getAllTours).toHaveBeenCalledWith(filters.page, filters.limit, {
-        title: filters.title,
-        isAccommodation: filters.isAccommodation,
-        categoryIds: [1, 2],
-        startDate: new Date(filters.startDate),
-        endDate: new Date(filters.endDate),
-        city: filters.city,
-        durationFrom: filters.durationFrom,
-        durationTo: filters.durationTo,
+      expect(service.getAllTours).toHaveBeenCalledWith(filterDto.page, filterDto.limit, {
+        ...filterDto,
+        userId: undefined
       });
     });
   });

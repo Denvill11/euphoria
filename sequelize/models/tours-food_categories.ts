@@ -8,7 +8,7 @@ import {
 import { FoodCategory } from './food_categories';
 import { Tour } from './tour';
 
-@Table({ tableName: 'tour-food_categories', timestamps: false })
+@Table({ tableName: 'tour-food_category', timestamps: false })
 export class TourFoodCategory extends Model<TourFoodCategory> {
   @ForeignKey(() => Tour)
   @Column({ type: DataType.INTEGER })

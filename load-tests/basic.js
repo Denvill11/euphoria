@@ -20,19 +20,17 @@ const ENDPOINTS = {
 };
 
 export default function () {
-  // Тест GET /tour
   let toursResponse = http.get(ENDPOINTS.tours);
   check(toursResponse, {
     'tours status is 200': (r) => r.status === 200,
     'tours response time < 200ms': (r) => r.timings.duration < 200,
   });
 
-  // Тест GET /food-category
   let foodCategoriesResponse = http.get(ENDPOINTS.foodCategories);
   check(foodCategoriesResponse, {
     'food categories status is 200': (r) => r.status === 200,
     'food categories response time < 200ms': (r) => r.timings.duration < 200,
   });
 
-  sleep(1); // Пауза между итерациями
+  sleep(1);
 } 

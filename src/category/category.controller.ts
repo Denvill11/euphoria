@@ -36,7 +36,7 @@ export class CategoryController {
   @UseGuards(Admin)
   @Post()
   @ApiConsumes('multipart/form-data')
-  @ImageUpload({ singleFile: true, fieldName: 'category' })
+  @ImageUpload({ singleFile: true, fieldName: 'iconPath' })
   async createCategory(
     @Body() createCategoryDto: CreateCategoryDTO,
     @UploadedFile() file: Express.Multer.File,

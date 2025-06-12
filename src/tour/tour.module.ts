@@ -5,10 +5,11 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Tour } from 'sequelize/models/tour';
 import { Flow } from 'sequelize/models/flows';
 import { User } from 'sequelize/models/user';
+import { FoodCategory } from 'sequelize/models/food_categories';
 
 @Module({
   controllers: [TourController],
   providers: [TourService],
-  imports: [SequelizeModule.forFeature([Tour, Flow, User])],
+  imports: [SequelizeModule.forFeature([Tour, Flow, User, FoodCategory])],
 })
 export class TourModule {}

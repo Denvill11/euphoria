@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
@@ -19,6 +18,8 @@ import { User, userTokenData } from 'src/helpers/decorators/user-decorator';
 import { AuthGuard } from 'src/helpers/guards/jwt-auth.guard';
 import { ImageUpload } from 'src/helpers/decorators/image-upload.decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AddFoodCategoriesDto } from './dto/addFoodCategoriesDto';
+import { GetTourFilterDto } from './dto/getTourFilterDto';
 
 @ApiTags('tours')
 @Controller('tour')
@@ -56,37 +57,36 @@ export class TourController {
   @ApiOperation({ summary: 'Получить список туров' })
   async getAllTours(
     @User() user: userTokenData | undefined,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-    @Query('title') title?: string,
-    @Query('isAccommodation') isAccommodation?: boolean,
-    @Query('categoryIds') categoryIds?: string,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-    @Query('city') city?: string,
-    @Query('durationFrom') durationFrom?: number,
-    @Query('durationTo') durationTo?: number,
-    @Query('isCreatedByMe') isCreatedByMe?: boolean,
+    @Query() filterDto: GetTourFilterDto
   ) {
-    const parsedCategoryIds = categoryIds
-      ? categoryIds.split(',').map((id) => parseInt(id, 10))
-      : undefined;
-
-    const parsedStartDate = startDate ? new Date(startDate) : undefined;
-    const parsedEndDate = endDate ? new Date(endDate) : undefined;
-
-    return this.tourService.getAllTours(page, limit, {
-      title,
-      isAccommodation,
-      categoryIds: parsedCategoryIds,
-      startDate: parsedStartDate,
-      endDate: parsedEndDate,
-      city: city,
-      durationFrom,
-      durationTo,
-      isCreatedByMe,
+    return this.tourService.getAllTours(filterDto.page, filterDto.limit, {
+      ...filterDto,
       userId: user?.id,
     });
+  }
+
+  @ApiBearerAuth()
+  @Post('/:tourId/food-categories')
+  @ApiOperation({ summary: 'Добавить категории еды к туру' })
+  @UseGuards(Organizer, AuthGuard)
+  async addFoodCategories(
+    @User() user: userTokenData,
+    @Param('tourId', ParseIntPipe) tourId: number,
+    @Body() addFoodCategoriesDto: AddFoodCategoriesDto,
+  ) {
+    return this.tourService.addFoodCategories(user, tourId, addFoodCategoriesDto);
+  }
+
+  @ApiBearerAuth()
+  @Delete('/:tourId/food-categories')
+  @ApiOperation({ summary: 'Удалить категории еды из тура' })
+  @UseGuards(Organizer, AuthGuard)
+  async removeFoodCategories(
+    @User() user: userTokenData,
+    @Param('tourId', ParseIntPipe) tourId: number,
+    @Body() addFoodCategoriesDto: AddFoodCategoriesDto,
+  ) {
+    return this.tourService.removeFoodCategories(user, tourId, addFoodCategoriesDto);
   }
 
   @ApiBearerAuth()

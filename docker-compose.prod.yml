@@ -28,6 +28,8 @@ services:
       - PRIVATE_KEY=${PRIVATE_KEY}
       - SALT_ROUNDS=${SALT_ROUNDS}
       - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - JWT_REFRESH_EXPIRATION=${JWT_REFRESH_EXPIRATION}
+      - JWT_REFRESH_TTL=${JWT_REFRESH_TTL}
     volumes:
       - ./uploads:/app/uploads
     networks:

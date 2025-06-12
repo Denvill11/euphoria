@@ -7,7 +7,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from 'src/helpers/guards/jwt-auth.guard';
 
 import { ApplicationService } from './application.service';
@@ -35,6 +35,12 @@ export class ApplicationController {
 
   @UseGuards(Organizer)
   @Get()
+  @ApiQuery({
+    name: 'organizationStatus',
+    required: false,
+    enum: OrganizationStatus,
+  })
+  @ApiQuery({ name: 'adminApprove', required: false, enum: ApplicationStatus })
   getAll(
     @User() user: userTokenData,
     @Query('organizationStatus') organizationStatus?: OrganizationStatus,
