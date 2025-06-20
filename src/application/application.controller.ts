@@ -16,7 +16,6 @@ import {
   ApplicationStatus,
   OrganizationStatus,
 } from 'sequelize/models/organizationApplications';
-import { Organizer } from 'src/helpers/guards/organizer.guard';
 import { Admin } from 'src/helpers/guards/admin.guard';
 
 @ApiBearerAuth()
@@ -33,7 +32,6 @@ export class ApplicationController {
     return this.applicationService.createApplication(user.id, innOrOgrn);
   }
 
-  @UseGuards(Organizer)
   @Get()
   @ApiQuery({
     name: 'organizationStatus',
