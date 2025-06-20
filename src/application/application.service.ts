@@ -132,7 +132,7 @@ export class ApplicationService extends HttpRequestService {
         include: [
           {
             model: User,
-            attributes: ['id', 'email', 'firstName', 'lastName', 'role'],
+            attributes: ['id', 'email', 'name', 'surname', 'role'],
           },
         ],
         order: [['createdAt', 'DESC']],
