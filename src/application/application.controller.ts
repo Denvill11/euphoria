@@ -33,7 +33,6 @@ export class ApplicationController {
     return this.applicationService.createApplication(user.id, innOrOgrn);
   }
 
-  @UseGuards(Organizer)
   @Get()
   @ApiQuery({
     name: 'organizationStatus',
