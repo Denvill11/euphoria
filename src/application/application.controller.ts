@@ -16,7 +16,6 @@ import {
   ApplicationStatus,
   OrganizationStatus,
 } from 'sequelize/models/organizationApplications';
-import { Organizer } from 'src/helpers/guards/organizer.guard';
 import { Admin } from 'src/helpers/guards/admin.guard';
 
 @ApiBearerAuth()
