@@ -187,6 +187,12 @@ export class TourService {
             model: User,
             as: 'author',
             attributes: ['id', 'name', 'surname'],
+          },
+          {
+            model: Flow,
+            as: 'flows',
+            attributes: ['id', 'startDate', 'endDate', 'participant', 'currentPrice'],
+            order: [['startDate', 'ASC']],
           }
         ]
       };
@@ -199,6 +205,51 @@ export class TourService {
       };
     } catch (error) {
       console.error('Error in getAllTours:', error);
+      throw new HttpException(
+        `${Errors.getTours}: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async getTourById(tourId: number): Promise<Tour> {
+    try {
+      const tour = await this.tourRepo.findByPk(tourId, {
+        include: [
+          {
+            model: User,
+            as: 'author',
+            attributes: ['id', 'name', 'surname'],
+          },
+          {
+            model: Flow,
+            as: 'flows',
+            attributes: ['id', 'startDate', 'endDate', 'participant', 'currentPrice'],
+            order: [['startDate', 'ASC']],
+          },
+          {
+            model: Category,
+            as: 'categories',
+            through: { attributes: [] },
+          },
+          {
+            model: FoodCategory,
+            as: 'foodCategories',
+            through: { attributes: [] },
+          }
+        ]
+      });
+
+      if (!tour) {
+        throw new HttpException(Errors.tourNotFound, HttpStatus.NOT_FOUND);
+      }
+
+      return tour;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      console.error('Error in getTourById:', error);
       throw new HttpException(
         `${Errors.getTours}: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
