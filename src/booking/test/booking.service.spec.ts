@@ -194,6 +194,36 @@ describe('BookingService', () => {
       expect(result).toEqual(expectedBookings);
       expect(bookingModel.findAll).toHaveBeenCalledWith({
         where: { userId },
+        include: [
+          {
+            model: expect.any(Function),
+            as: 'flow',
+            include: [
+              {
+                model: expect.any(Function),
+                as: 'tour',
+                include: [
+                  {
+                    model: expect.any(Function),
+                    as: 'author',
+                    attributes: ['id', 'name', 'surname'],
+                  },
+                  {
+                    model: expect.any(Function),
+                    as: 'categories',
+                    through: { attributes: [] },
+                  },
+                  {
+                    model: expect.any(Function),
+                    as: 'foodCategories',
+                    through: { attributes: [] },
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        order: [['createdAt', 'DESC']]
       });
     });
   });

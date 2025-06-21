@@ -5,6 +5,10 @@ import { CreateBookingDTO } from './dto/createBookingDTO';
 import { UpdateBookingDTO } from './dto/updateBookingDTO';
 import { Flow } from 'sequelize/models/flows';
 import { Errors } from 'src/helpers/constants/errorMessages';
+import { Tour } from 'sequelize/models/tour';
+import { User } from 'sequelize/models/user';
+import { Category } from 'sequelize/models/category';
+import { FoodCategory } from 'sequelize/models/food_categories';
 
 @Injectable()
 export class BookingService {
@@ -84,6 +88,36 @@ export class BookingService {
   async getBookingsForUser(userId: number): Promise<Booking[]> {
     const bookings = await this.bookingRepo.findAll({
       where: { userId },
+      include: [
+        {
+          model: Flow,
+          as: 'flow',
+          include: [
+            {
+              model: Tour,
+              as: 'tour',
+              include: [
+                {
+                  model: User,
+                  as: 'author',
+                  attributes: ['id', 'name', 'surname'],
+                },
+                {
+                  model: Category,
+                  as: 'categories',
+                  through: { attributes: [] },
+                },
+                {
+                  model: FoodCategory,
+                  as: 'foodCategories',
+                  through: { attributes: [] },
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
     });
 
     return bookings;
