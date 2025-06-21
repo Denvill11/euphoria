@@ -21,7 +21,7 @@ export class Admin implements CanActivate {
 
     const decoded: any = this.jwtService.decode(token);
 
-    if (decoded.role !== UserRole.ADMIN) {
+    if (decoded.role !== UserRole.ADMIN && decoded.userRole !== UserRole.ADMIN) {
       throw new ForbiddenException('You do not have the necessary admin role');
     }
 
