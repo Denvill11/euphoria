@@ -33,7 +33,7 @@ export class MailerService {
                 <table width="700" cellpadding="20" cellspacing="0" border="0" style="max-width: 700px;">
                   <tr>
                     <td align="center">
-                      <img src="https://82grrc2b-3001.euw.devtunnels.ms/uploads/verification.png" width="250" alt="Verification Image">
+                      <img src="http://62.109.17.167:3001/uploads/verification.png" width="250" alt="Verification Image">
                     </td>
                   </tr>
                   <tr>
