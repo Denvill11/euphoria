@@ -176,25 +176,59 @@ export class TourService {
         where.duration[Op.lte] = filters.durationTo;
       }
 
+      const includes: any[] = [
+        {
+          model: User,
+          as: 'author',
+          attributes: ['id', 'name', 'surname'],
+        },
+        {
+          model: Flow,
+          as: 'flows',
+          attributes: ['id', 'startDate', 'endDate', 'participant', 'currentPrice'],
+          order: [['startDate', 'ASC']],
+        }
+      ];
+
+      if (filters.foodCategoryIds?.length) {
+        includes.push({
+          model: FoodCategory,
+          as: 'foodCategories',
+          through: { attributes: [] },
+          where: { id: { [Op.in]: filters.foodCategoryIds } },
+          required: true
+        });
+      } else {
+        includes.push({
+          model: FoodCategory,
+          as: 'foodCategories',
+          through: { attributes: [] },
+        });
+      }
+
+      if (filters.categoryIds?.length) {
+        includes.push({
+          model: Category,
+          as: 'categories',
+          through: { attributes: [] },
+          where: { id: { [Op.in]: filters.categoryIds } },
+          required: true
+        });
+      } else {
+        includes.push({
+          model: Category,
+          as: 'categories',
+          through: { attributes: [] },
+        });
+      }
+
       const queryOptions: FindAndCountOptions<Tour> = {
         where,
         limit,
         offset,
         distinct: true,
         order: [['createdAt', 'DESC']],
-        include: [
-          {
-            model: User,
-            as: 'author',
-            attributes: ['id', 'name', 'surname'],
-          },
-          {
-            model: Flow,
-            as: 'flows',
-            attributes: ['id', 'startDate', 'endDate', 'participant', 'currentPrice'],
-            order: [['startDate', 'ASC']],
-          }
-        ]
+        include: includes
       };
 
       const { rows, count } = await this.tourRepo.findAndCountAll(queryOptions);
