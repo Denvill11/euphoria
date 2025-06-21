@@ -54,7 +54,7 @@ export class TourController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Получить список туров' })
+  @ApiOperation({ summary: 'Получить список туров с потоками' })
   async getAllTours(
     @User() user: userTokenData | undefined,
     @Query() filterDto: GetTourFilterDto
@@ -63,6 +63,14 @@ export class TourController {
       ...filterDto,
       userId: user?.id,
     });
+  }
+
+  @Get('/:tourId')
+  @ApiOperation({ summary: 'Получить конкретный тур с потоками' })
+  async getTourById(
+    @Param('tourId', ParseIntPipe) tourId: number,
+  ) {
+    return this.tourService.getTourById(tourId);
   }
 
   @ApiBearerAuth()
