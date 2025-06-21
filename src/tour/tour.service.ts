@@ -125,14 +125,14 @@ export class TourService {
     }
   }
 
-  async getAllTours(
+async getAllTours(
     page = 1,
     limit = 10,
     filters: {
       title?: string;
       isAccommodation?: boolean;
-      categoryIds?: number[];
-      foodCategoryIds?: number[];
+      categoryIds?: number[] | string;
+      foodCategoryIds?: number[] | string;
       startDate?: Date;
       endDate?: Date;
       city?: string;
@@ -176,6 +176,26 @@ export class TourService {
         where.duration[Op.lte] = filters.durationTo;
       }
 
+      // Безопасное преобразование foodCategoryIds
+      let foodCategoryIds: number[] | undefined;
+      if (filters.foodCategoryIds) {
+        if (Array.isArray(filters.foodCategoryIds)) {
+          foodCategoryIds = filters.foodCategoryIds;
+        } else if (typeof filters.foodCategoryIds === 'string') {
+          foodCategoryIds = filters.foodCategoryIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+        }
+      }
+
+      // Безопасное преобразование categoryIds
+      let categoryIds: number[] | undefined;
+      if (filters.categoryIds) {
+        if (Array.isArray(filters.categoryIds)) {
+          categoryIds = filters.categoryIds;
+        } else if (typeof filters.categoryIds === 'string') {
+          categoryIds = filters.categoryIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+        }
+      }
+
       const includes: any[] = [
         {
           model: User,
@@ -190,15 +210,17 @@ export class TourService {
         }
       ];
 
-      if (filters.foodCategoryIds?.length) {
+      // Добавляем категории еды с фильтрацией
+      if (foodCategoryIds?.length) {
         includes.push({
           model: FoodCategory,
           as: 'foodCategories',
           through: { attributes: [] },
-          where: { id: { [Op.in]: filters.foodCategoryIds } },
+          where: { id: { [Op.in]: foodCategoryIds } },
           required: true
         });
       } else {
+        // Если нет фильтра, просто включаем все категории еды
         includes.push({
           model: FoodCategory,
           as: 'foodCategories',
@@ -206,15 +228,17 @@ export class TourService {
         });
       }
 
-      if (filters.categoryIds?.length) {
+      // Добавляем категории с фильтрацией
+      if (categoryIds?.length) {
         includes.push({
           model: Category,
           as: 'categories',
           through: { attributes: [] },
-          where: { id: { [Op.in]: filters.categoryIds } },
+          where: { id: { [Op.in]: categoryIds } },
           required: true
         });
       } else {
+        // Если нет фильтра, просто включаем все категории
         includes.push({
           model: Category,
           as: 'categories',
