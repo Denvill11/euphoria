@@ -1,4 +1,4 @@
-import { Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, ForeignKey, Model, Table, BelongsTo } from 'sequelize-typescript';
 import { User } from './user';
 import { Flow } from './flows';
 
@@ -17,4 +17,10 @@ export class Booking extends Model<Booking> {
 
   @Column({ type: DataType.INTEGER, allowNull: false, validate: { min: 0 }})
   participant: number;
+
+  @BelongsTo(() => User)
+  user: User;
+
+  @BelongsTo(() => Flow)
+  flow: Flow;
 }
